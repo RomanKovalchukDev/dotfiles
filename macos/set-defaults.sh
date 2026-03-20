@@ -23,24 +23,5 @@ chflags nohidden ~/Library
 defaults write NSGlobalDomain KeyRepeat -int 1
 
 # Set the Finder prefs for showing a few different volumes on the Desktop.
-defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
-
-# Run the screensaver if we're in the bottom-left hot corner.
-defaults write com.apple.dock wvous-bl-corner -int 5
-defaults write com.apple.dock wvous-bl-modifier -int 0
-
-# Hide Safari's bookmark bar.
-defaults write com.apple.Safari.plist ShowFavoritesBar -bool false
-
-# Always show Safari's "URL display" tab in the lower left on mouseover. Strangely
-# like, everyone and their LLMs on the internet thinks this is ShowStatusBar, but
-# it's not.
-defaults write com.apple.Safari ShowOverlayStatusBar -bool true
-
-# Set up Safari for development.
-defaults write com.apple.Safari.SandboxBroker ShowDevelopMenu -bool true
-defaults write com.apple.Safari.plist IncludeDevelopMenu -bool true
-defaults write com.apple.Safari.plist WebKitDeveloperExtrasEnabledPreferenceKey -bool true
-defaults write com.apple.Safari.plist "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" -bool true
-defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
+defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool false
