@@ -51,6 +51,7 @@ This mirrors the ZSH loading pattern. Fish configuration files are distributed a
 - **`script/`** - Installation and setup scripts
 - **`functions/`** - Shell function definitions and completions
 - **`macos/`** - macOS-specific defaults and configuration
+- **`claude/skills/`** - Claude Code skills (slash commands), supports public + private skills
 
 ## Common Commands
 
@@ -165,3 +166,54 @@ script/bootstrap  # or script/install
 ```
 
 **Note:** Both shells follow the same topic-centric pattern. Configuration files are distributed across topic directories (e.g., `git/aliases.zsh` and `git/aliases.fish` live side-by-side in the `git/` directory).
+
+## Claude Code Skills Management
+
+Claude Code skills (slash commands) are managed with a two-repository approach:
+
+**Public skills** (in this repo):
+- Located in `claude/skills/`
+- General-purpose, shareable skills
+- Tracked in the dotfiles repository
+
+**Private skills** (separate repo):
+- Located in `~/.dotfiles-private/claude/skills/`
+- Personal, work-specific, or sensitive skills
+- Tracked in a separate private repository
+
+### Setup
+
+1. **Install public skills** (runs automatically with `script/install`):
+   ```bash
+   ./claude/install.sh
+   ```
+
+2. **Set up private skills** (optional):
+   - Create a private repository with structure: `dotfiles-private/claude/skills/`
+   - Edit `claude/install.sh` and set `PRIVATE_REPO_URL`
+   - Run `./claude/install.sh` and answer `y` when prompted
+
+3. **Result**: Both public and private skills are symlinked to `~/.claude/commands/`
+
+### Adding New Skills
+
+**Public skill**:
+```bash
+# Create skill in dotfiles
+echo "# My Skill" > claude/skills/my-skill.md
+git add claude/skills/my-skill.md
+git commit -m "Add my-skill"
+./claude/install.sh
+```
+
+**Private skill**:
+```bash
+# Create skill in private repo
+echo "# Private Skill" > ~/.dotfiles-private/claude/skills/private.md
+git -C ~/.dotfiles-private add claude/skills/private.md
+git -C ~/.dotfiles-private commit -m "Add private skill"
+git -C ~/.dotfiles-private push
+./claude/install.sh
+```
+
+See `claude/README.md` for detailed documentation.
