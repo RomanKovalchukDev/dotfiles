@@ -4,13 +4,13 @@ This directory contains everything needed for initial machine provisioning and s
 
 ## Contents
 
-- **Brewfile** - Homebrew packages and casks to install
-- **bootstrap.sh** - Initial setup script (git config, symlinks)
-- **install.sh** - Main installation script (runs all installers)
-- **macos/** - macOS-specific configuration
+- **mac/** - macOS-specific setup and configuration
+  - `bootstrap.sh` - Initial setup script (git config, symlinks)
+  - `install.sh` - Main installation script (runs all installers)
   - `set-defaults.sh` - System preferences and defaults
   - `set-hostname.sh` - Set computer hostname
-- **scripts/** - Additional installation and setup scripts
+  - `bin/` - Installation utilities and scripts
+    - `Brewfile` - Homebrew packages and casks to install
 
 ## Quick Start
 
@@ -22,10 +22,10 @@ git clone YOUR_REPO_URL ~/.dotfiles
 cd ~/.dotfiles
 
 # Run bootstrap (creates symlinks, configures git)
-./machine-setup/bootstrap.sh
+./machine-setup/mac/bootstrap.sh
 
 # Run full install (installs packages, runs topic installers)
-./machine-setup/install.sh
+./machine-setup/mac/install.sh
 ```
 
 ### What bootstrap.sh Does
@@ -51,7 +51,7 @@ cd ~/.dotfiles
 
 ```bash
 # Apply all macOS system preferences
-./machine-setup/macos/set-defaults.sh
+./machine-setup/mac/set-defaults.sh
 ```
 
 This configures:
@@ -65,7 +65,7 @@ This configures:
 
 ```bash
 # Set computer name
-./machine-setup/macos/set-hostname.sh
+./machine-setup/mac/set-hostname.sh
 ```
 
 ## Maintenance
@@ -87,10 +87,10 @@ The `dot` command (from config/bin/dot) does:
 
 ```bash
 # Just update Homebrew packages
-brew bundle --file=machine-setup/Brewfile
+brew bundle --file=machine-setup/mac/bin/Brewfile
 
 # Just re-run bootstrap (update symlinks)
-./machine-setup/bootstrap.sh
+./machine-setup/mac/bootstrap.sh
 
 # Just update AI tools
 ./ai/claude/install.sh
@@ -100,7 +100,7 @@ brew bundle --file=machine-setup/Brewfile
 
 ### Adding Packages
 
-Edit `Brewfile` and add your packages:
+Edit `mac/bin/Brewfile` and add your packages:
 
 ```ruby
 # CLI tools
@@ -114,12 +114,12 @@ cask "iterm2"
 
 Then run:
 ```bash
-brew bundle --file=machine-setup/Brewfile
+brew bundle --file=machine-setup/mac/bin/Brewfile
 ```
 
 ### Adding macOS Defaults
 
-Edit `macos/set-defaults.sh` and add your preferences:
+Edit `mac/set-defaults.sh` and add your preferences:
 
 ```bash
 # Example: Enable dark mode
@@ -135,7 +135,7 @@ defaults write NSGlobalDomain AppleInterfaceStyle -string "Dark"
 ls -la ~/ | grep "dotfiles"
 
 # Re-run bootstrap
-./machine-setup/bootstrap.sh
+./machine-setup/mac/bootstrap.sh
 ```
 
 ### Brewfile Install Fails
@@ -165,11 +165,11 @@ echo $SHELL
 
 | File | Purpose | When to Run |
 |------|---------|-------------|
-| bootstrap.sh | Initial setup, symlinks | First install, after adding new symlinks |
-| install.sh | Install everything | First install, after major changes |
-| Brewfile | Package definitions | After adding packages |
-| macos/set-defaults.sh | System preferences | First install, after macOS updates |
-| macos/set-hostname.sh | Set computer name | First install, when changing hostname |
+| mac/bootstrap.sh | Initial setup, symlinks | First install, after adding new symlinks |
+| mac/install.sh | Install everything | First install, after major changes |
+| mac/bin/Brewfile | Package definitions | After adding packages |
+| mac/set-defaults.sh | System preferences | First install, after macOS updates |
+| mac/set-hostname.sh | Set computer name | First install, when changing hostname |
 
 ## Next Steps
 

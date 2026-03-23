@@ -116,35 +116,35 @@ run_phase2() {
 
   create_backup_tag "pre-migration-phase2" "Before machine-setup migration"
 
-  # Move Brewfile
-  git_move "Brewfile" "machine-setup/Brewfile"
-
   # Move bootstrap script
   if [ -f "script/bootstrap" ]; then
-    git_move "script/bootstrap" "machine-setup/bootstrap.sh"
+    git_move "script/bootstrap" "machine-setup/mac/bootstrap.sh"
   fi
 
   # Move install script
   if [ -f "script/install" ]; then
-    git_move "script/install" "machine-setup/install.sh"
+    git_move "script/install" "machine-setup/mac/install.sh"
   fi
 
-  # Move macos directory
+  # Move Brewfile to mac/bin
+  git_move "Brewfile" "machine-setup/mac/bin/Brewfile"
+
+  # Move macos directory contents to mac/
   if [ -d "macos" ]; then
-    git_move "macos/set-defaults.sh" "machine-setup/macos/set-defaults.sh" 2>/dev/null || true
-    git_move "macos/set-hostname.sh" "machine-setup/macos/set-hostname.sh" 2>/dev/null || true
+    git_move "macos/set-defaults.sh" "machine-setup/mac/set-defaults.sh" 2>/dev/null || true
+    git_move "macos/set-hostname.sh" "machine-setup/mac/set-hostname.sh" 2>/dev/null || true
     # Remove old directory if empty
     if [ -z "$(ls -A macos 2>/dev/null)" ]; then
       rmdir macos 2>/dev/null || true
     fi
   fi
 
-  # Move remaining script directory contents
+  # Move remaining script directory contents to mac/bin/
   if [ -d "script" ]; then
     for file in script/*; do
       if [ -e "$file" ]; then
         filename=$(basename "$file")
-        git_move "$file" "machine-setup/scripts/$filename"
+        git_move "$file" "machine-setup/mac/bin/$filename"
       fi
     done
     # Remove old directory if empty

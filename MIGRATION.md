@@ -25,8 +25,8 @@ This migration reorganizes the dotfiles repository into three main directories:
 
 | Current | New Location | Purpose |
 |---------|-------------|---------|
-| `script/` | `machine-setup/scripts/` | Installation scripts |
-| `macos/` | `machine-setup/macos/` | macOS configuration |
+| `script/` | `machine-setup/mac/bin/` | Installation scripts |
+| `macos/` | `machine-setup/mac/` | macOS configuration |
 | `.claude/` | `ai/.claude/` | Project-level Claude config |
 | `claude/` | `ai/claude/` | User-level Claude config |
 | `fish/` | `config/shell/fish/` | Fish shell |
@@ -79,7 +79,7 @@ This migration reorganizes the dotfiles repository into three main directories:
 ### bootstrap.sh
 
 **Old path:** `script/bootstrap`
-**New path:** `machine-setup/bootstrap.sh`
+**New path:** `machine-setup/mac/bootstrap.sh`
 
 **References to update:**
 - `~/.dotfiles/script/bootstrap` → `~/.dotfiles/machine-setup/bootstrap.sh`
@@ -89,11 +89,11 @@ This migration reorganizes the dotfiles repository into three main directories:
 ### install.sh
 
 **Old path:** `script/install`
-**New path:** `machine-setup/install.sh`
+**New path:** `machine-setup/mac/install.sh`
 
 **References to update:**
-- `~/.dotfiles/script/install` → `~/.dotfiles/machine-setup/install.sh`
-- Brewfile path: `./Brewfile` → `./machine-setup/Brewfile`
+- `~/.dotfiles/script/install` → `~/.dotfiles/machine-setup/mac/install.sh`
+- Brewfile path: `./Brewfile` → `./machine-setup/mac/bin/Brewfile`
 - Search paths for `install.sh` files
 - Claude install path: `./claude/install.sh` → `./ai/claude/install.sh`
 
@@ -252,8 +252,8 @@ git mv CLAUDE.md ai/CLAUDE.md
 This phase requires editing files to update paths. See "Script Path Updates" section above.
 
 **Files to edit:**
-1. `machine-setup/bootstrap.sh` - Update symlink search paths
-2. `machine-setup/install.sh` - Update Brewfile path, claude install path
+1. `machine-setup/mac/bootstrap.sh` - Update symlink search paths
+2. `machine-setup/mac/install.sh` - Update Brewfile path, claude install path
 3. `config/shell/fish/config.fish` - Update file discovery paths
 4. `config/shell/zsh/zshrc.symlink` - Update file discovery paths
 5. `ai/claude/install.sh` - Update skills/agents/settings paths
@@ -263,14 +263,14 @@ This phase requires editing files to update paths. See "Script Path Updates" sec
 
 ```bash
 # Test bootstrap
-./machine-setup/bootstrap.sh
+./machine-setup/mac/bootstrap.sh
 
 # Verify symlinks
 ls -la ~/ | grep "dotfiles"
 ls -la ~/.config/ | grep "fish"
 
 # Test install
-./machine-setup/install.sh
+./machine-setup/mac/install.sh
 
 # Test shell configs
 fish -c "echo \$PATH"
@@ -313,8 +313,8 @@ git checkout pre-migration-phase4  # Before ai/
 
 After migration, verify:
 
-- [ ] `machine-setup/bootstrap.sh` runs successfully
-- [ ] `machine-setup/install.sh` runs successfully
+- [ ] `machine-setup/mac/bootstrap.sh` runs successfully
+- [ ] `machine-setup/mac/install.sh` runs successfully
 - [ ] All `*.symlink` files create symlinks in `$HOME`
 - [ ] Fish shell loads configuration correctly
 - [ ] ZSH shell loads configuration correctly
