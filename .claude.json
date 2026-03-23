@@ -1,0 +1,29 @@
+{
+  "_comment": "Project-level Claude Code configuration for dotfiles repository",
+  "_hierarchy": "This file is read AFTER ~/.claude/settings.json but BEFORE .claude.local.json",
+
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(brew:*)",
+      "Bash(ls:*)",
+      "Bash(chmod:*)",
+      "Bash(ln:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(find:*)",
+      "Bash(fish:*)",
+      "Bash(zsh:*)"
+    ],
+    "defaultMode": "ask"
+  },
+
+  "statusLine": {
+    "type": "command",
+    "command": "~/.dotfiles/claude/statusline.sh || echo 'dotfiles'"
+  },
+
+  "effortLevel": "high"
+}
