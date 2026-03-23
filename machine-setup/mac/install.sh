@@ -4,10 +4,10 @@
 
 set -e
 
-cd "$(dirname $0)"/..
+cd "$(dirname $0)"/../..
 
 echo "› brew bundle"
-brew bundle
+brew bundle --file=machine-setup/mac/bin/Brewfile
 
 # find the installers and run them iteratively
-find . -name install.sh | while read installer ; do sh -c "${installer}" ; done
+find config/mac -name install.sh | while read installer ; do sh -c "${installer}" ; done
