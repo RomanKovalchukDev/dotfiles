@@ -380,7 +380,8 @@ else
     then
       success "dependencies installed"
     else
-      fail "error installing dependencies"
+      warning "some dependencies failed to install (exit code: $?)"
+      warning "continuing with bootstrap..."
     fi
   else
     # Normal mode: prefix each line with info
@@ -388,7 +389,8 @@ else
     then
       success "dependencies installed"
     else
-      fail "error installing dependencies"
+      warning "some dependencies failed to install"
+      warning "continuing with bootstrap..."
     fi
   fi
 fi

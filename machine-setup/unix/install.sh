@@ -2,7 +2,8 @@
 #
 # Run all dotfiles installers.
 
-set -e
+# Don't exit on error - we want to try everything even if something fails
+set +e
 
 cd "$(dirname $0)"/../..
 
@@ -35,29 +36,39 @@ if ! command -v brew >/dev/null 2>&1; then
   if command -v brew >/dev/null 2>&1; then
     echo "  Homebrew in PATH: $(which brew)"
   else
-    echo "  ERROR: Cannot find brew after installation"
+    echo "  WARNING: Cannot find brew after installation"
+    echo "  Skipping brew bundle..."
     exit 1
   fi
 fi
 
 # Install packages via Homebrew
 echo "› brew bundle"
-brew bundle --file=machine-setup/unix/Brewfile
+if ! brew bundle --file=machine-setup/unix/Brewfile; then
+  echo "  WARNING: Some Homebrew packages failed to install"
+  echo "  You may need to run 'brew bundle --file=machine-setup/unix/Brewfile' manually"
+fi
 
 # Setup Fish shell (Fisher + Bass)
 echo "› Setting up Fish"
-sh machine-setup/unix/install-fish.sh
+if ! sh machine-setup/unix/install-fish.sh; then
+  echo "  WARNING: Fish setup failed"
+fi
 
 # Set Ghostty as default terminal (macOS only)
 if [ "$(uname -s)" == "Darwin" ]
 then
   echo "› Setting Ghostty as default terminal"
-  sh machine-setup/mac/set-default-terminal.sh
+  if ! sh machine-setup/mac/set-default-terminal.sh; then
+    echo "  WARNING: Failed to set Ghostty as default terminal"
+  fi
 fi
 
 # Install ZSH (optional, interactive)
 echo "› Setting up ZSH"
-sh machine-setup/unix/install-zsh.sh
+if ! sh machine-setup/unix/install-zsh.sh; then
+  echo "  WARNING: ZSH setup failed or was skipped"
+fi
 
 # Find and run any other installers in config directory
 if [ "$(uname -s)" == "Darwin" ]
