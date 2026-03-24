@@ -8,6 +8,7 @@
 # Check for Homebrew
 if test ! $(which brew)
 then
+  echo "  Homebrew not found."
   echo "  Installing Homebrew for you."
 
   # Install the correct homebrew for each OS type
@@ -18,7 +19,8 @@ then
   then
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install)"
   fi
-
+else
+  echo "  Homebrew already installed at $(which brew)"
 fi
 
 # Link keg-only formulas that we want in PATH
