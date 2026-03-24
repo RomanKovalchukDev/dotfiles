@@ -18,6 +18,13 @@ brew bundle --file=machine-setup/unix/Brewfile
 echo "› Setting up Fish"
 sh machine-setup/unix/install-fish.sh
 
+# Set Ghostty as default terminal (macOS only)
+if [ "$(uname -s)" == "Darwin" ]
+then
+  echo "› Setting Ghostty as default terminal"
+  sh machine-setup/mac/set-default-terminal.sh
+fi
+
 # Install ZSH (optional, interactive)
 echo "› Setting up ZSH"
 sh machine-setup/unix/install-zsh.sh
