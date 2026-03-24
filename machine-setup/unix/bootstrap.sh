@@ -10,6 +10,8 @@ set -e
 # Parse command line flags
 RUN_SET_DEFAULTS=false
 RUN_SET_HOSTNAME=false
+DRY_RUN=false
+AUTO_MODE=""
 
 usage() {
   echo "Usage: bootstrap.sh [options]"
@@ -18,6 +20,9 @@ usage() {
   echo "  -a, --all             Run all optional setup (defaults + hostname)"
   echo "  -d, --set-defaults    Run macOS set-defaults.sh (sets system preferences)"
   echo "  -n, --set-hostname    Run macOS set-hostname.sh (sets computer hostname)"
+  echo "  -o, --overwrite-all   Automatically overwrite existing files without prompting"
+  echo "  -b, --backup-all      Automatically backup existing files without prompting"
+  echo "  --dry-run             Preview what would be done without making changes"
   echo "  -h, --help            Show this help message"
   echo ""
   exit 0
@@ -38,6 +43,18 @@ while [[ $# -gt 0 ]]; do
       RUN_SET_HOSTNAME=true
       shift
       ;;
+    -o|--overwrite-all)
+      AUTO_MODE="overwrite"
+      shift
+      ;;
+    -b|--backup-all)
+      AUTO_MODE="backup"
+      shift
+      ;;
+    --dry-run)
+      DRY_RUN=true
+      shift
+      ;;
     -h|--help)
       usage
       ;;
@@ -50,16 +67,31 @@ done
 
 echo ''
 
+if [ "$DRY_RUN" == "true" ]; then
+  echo "========================================="
+  echo "  DRY RUN MODE - No changes will be made"
+  echo "========================================="
+  echo ''
+fi
+
 # Initialize git submodules
 if [ -f .gitmodules ]; then
-  echo "Initializing git submodules..."
-  git submodule update --init --recursive
+  if [ "$DRY_RUN" == "true" ]; then
+    info "Would initialize git submodules"
+  else
+    echo "Initializing git submodules..."
+    git submodule update --init --recursive
+  fi
 fi
 
 echo ''
 
 info () {
-  printf "\r  [ \033[00;34m..\033[0m ] $1\n"
+  if [ "$DRY_RUN" == "true" ]; then
+    printf "\r  [ \033[00;35mDRY\033[0m ] $1\n"
+  else
+    printf "\r  [ \033[00;34m..\033[0m ] $1\n"
+  fi
 }
 
 user () {
@@ -67,7 +99,11 @@ user () {
 }
 
 success () {
-  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
+  if [ "$DRY_RUN" == "true" ]; then
+    printf "\r\033[2K  [ \033[00;35mDRY\033[0m ] would: $1\n"
+  else
+    printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
+  fi
 }
 
 fail () {
@@ -76,10 +112,26 @@ fail () {
   exit
 }
 
+warning () {
+  printf "\r\033[2K  [\033[0;33mWARN\033[0m] $1\n"
+}
+
+validate_config_dir () {
+  # Check if ~/.config exists and is not a directory
+  if [ -e "$HOME/.config" ] && [ ! -d "$HOME/.config" ]; then
+    fail "~/.config exists but is not a directory. Please fix this:\n  mv ~/.config ~/.config.backup && mkdir ~/.config"
+  fi
+}
+
 setup_gitconfig () {
   if ! [ -f config/unix/git/gitconfig.local.symlink ]
   then
     info 'setup gitconfig'
+
+    if [ "$DRY_RUN" == "true" ]; then
+      success 'create gitconfig from template'
+      return
+    fi
 
     git_credential='cache'
     if [ "$(uname -s)" == "Darwin" ]
@@ -107,19 +159,22 @@ link_file () {
 
   if [ -f "$dst" -o -d "$dst" -o -L "$dst" ]
   then
+    # Check if already correctly linked
+    local currentSrc="$(readlink $dst 2>/dev/null || echo '')"
 
-    if [ "$overwrite_all" == "false" ] && [ "$backup_all" == "false" ] && [ "$skip_all" == "false" ]
+    if [ "$currentSrc" == "$src" ]
     then
-
-      local currentSrc="$(readlink $dst)"
-
-      if [ "$currentSrc" == "$src" ]
+      skip=true;
+    else
+      # Handle AUTO_MODE first
+      if [ "$AUTO_MODE" == "overwrite" ]; then
+        overwrite_all=true
+        overwrite=true
+      elif [ "$AUTO_MODE" == "backup" ]; then
+        backup_all=true
+        backup=true
+      elif [ "$overwrite_all" != "true" ] && [ "$backup_all" != "true" ] && [ "$skip_all" != "true" ]
       then
-
-        skip=true;
-
-      else
-
         user "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
         [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
         read -n 1 action
@@ -140,37 +195,47 @@ link_file () {
           * )
             ;;
         esac
-
       fi
 
-    fi
+      overwrite=${overwrite:-$overwrite_all}
+      backup=${backup:-$backup_all}
+      skip=${skip:-$skip_all}
 
-    overwrite=${overwrite:-$overwrite_all}
-    backup=${backup:-$backup_all}
-    skip=${skip:-$skip_all}
+      if [ "$overwrite" == "true" ]
+      then
+        if [ "$DRY_RUN" == "true" ]; then
+          success "remove $dst"
+        else
+          rm -rf "$dst"
+          success "removed $dst"
+        fi
+      fi
 
-    if [ "$overwrite" == "true" ]
-    then
-      rm -rf "$dst"
-      success "removed $dst"
-    fi
+      if [ "$backup" == "true" ]
+      then
+        if [ "$DRY_RUN" == "true" ]; then
+          success "move $dst to ${dst}.backup"
+        else
+          mv "$dst" "${dst}.backup"
+          success "moved $dst to ${dst}.backup"
+        fi
+      fi
 
-    if [ "$backup" == "true" ]
-    then
-      mv "$dst" "${dst}.backup"
-      success "moved $dst to ${dst}.backup"
-    fi
-
-    if [ "$skip" == "true" ]
-    then
-      success "skipped $src"
+      if [ "$skip" == "true" ]
+      then
+        success "skipped $src"
+      fi
     fi
   fi
 
   if [ "$skip" != "true" ]  # "false" or empty
   then
-    ln -s "$1" "$2"
-    success "linked $1 to $2"
+    if [ "$DRY_RUN" == "true" ]; then
+      success "link $1 to $2"
+    else
+      ln -s "$1" "$2"
+      success "linked $1 to $2"
+    fi
   fi
 }
 
@@ -190,7 +255,11 @@ setup_claude_code () {
   info 'setting up Claude Code configuration'
 
   # Create ~/.claude directory
-  mkdir -p "$HOME/.claude"
+  if [ "$DRY_RUN" == "true" ]; then
+    success "create directory $HOME/.claude"
+  else
+    mkdir -p "$HOME/.claude"
+  fi
 
   local overwrite_all=false backup_all=false skip_all=false
 
@@ -220,8 +289,15 @@ setup_claude_code () {
 setup_ghostty () {
   info 'setting up Ghostty configuration'
 
+  # Validate ~/.config exists and is a directory
+  validate_config_dir
+
   # Create Ghostty config directory
-  mkdir -p "$HOME/.config/ghostty"
+  if [ "$DRY_RUN" == "true" ]; then
+    success "create directory $HOME/.config/ghostty"
+  else
+    mkdir -p "$HOME/.config/ghostty"
+  fi
 
   local overwrite_all=false backup_all=false skip_all=false
 
@@ -238,35 +314,54 @@ setup_ghostty
 
 # Run installation script
 info "installing dependencies"
-if sh machine-setup/unix/install.sh 2>&1 | while read -r data; do info "$data"; done
-then
-  success "dependencies installed"
+if [ "$DRY_RUN" == "true" ]; then
+  success "run machine-setup/unix/install.sh"
 else
-  fail "error installing dependencies"
+  if sh machine-setup/unix/install.sh 2>&1 | while read -r data; do info "$data"; done
+  then
+    success "dependencies installed"
+  else
+    fail "error installing dependencies"
+  fi
 fi
 
 # Run optional macOS setup scripts
 if [ "$(uname -s)" == "Darwin" ]; then
   if [ "$RUN_SET_DEFAULTS" == "true" ]; then
     info "applying macOS system defaults"
-    if sh machine-setup/mac/set-defaults.sh
-    then
-      success "macOS defaults applied"
+    if [ "$DRY_RUN" == "true" ]; then
+      success "run machine-setup/mac/set-defaults.sh"
     else
-      fail "error applying macOS defaults"
+      if sh machine-setup/mac/set-defaults.sh
+      then
+        success "macOS defaults applied"
+      else
+        fail "error applying macOS defaults"
+      fi
     fi
   fi
 
   if [ "$RUN_SET_HOSTNAME" == "true" ]; then
     info "setting macOS hostname"
-    if sh machine-setup/mac/set-hostname.sh
-    then
-      success "macOS hostname set"
+    if [ "$DRY_RUN" == "true" ]; then
+      success "run machine-setup/mac/set-hostname.sh"
     else
-      fail "error setting macOS hostname"
+      if sh machine-setup/mac/set-hostname.sh
+      then
+        success "macOS hostname set"
+      else
+        fail "error setting macOS hostname"
+      fi
     fi
   fi
 fi
 
 echo ''
-echo '  All installed!'
+if [ "$DRY_RUN" == "true" ]; then
+  echo '========================================='
+  echo '  Dry run complete!'
+  echo '  Run without --dry-run to apply changes'
+  echo '========================================='
+else
+  echo '  All installed!'
+fi
