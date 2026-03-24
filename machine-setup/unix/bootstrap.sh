@@ -302,7 +302,7 @@ setup_ghostty () {
   local overwrite_all=false backup_all=false skip_all=false
 
   # Symlink Ghostty config
-  link_file "$DOTFILES_ROOT/config/unix/ghostty/config.symlink" "$HOME/.config/ghostty/config"
+  link_file "$DOTFILES_ROOT/config/unix/ghostty/config" "$HOME/.config/ghostty/config"
 
   success 'Ghostty configuration linked'
 }
