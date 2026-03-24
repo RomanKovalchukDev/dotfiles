@@ -12,13 +12,14 @@ The repository is organized into three main directories:
 
 Machine setup and installation scripts organized by platform.
 
-- **machine-setup/unix/** - Cross-platform installation scripts
+- **machine-setup/** - Installation and setup scripts
   - `bootstrap.sh` - Main entry point for setting up a new machine
-  - `install.sh` - Install dependencies and packages
-  - `install-homebrew.sh` - Install Homebrew (works on macOS and Linux)
-  - `Brewfile` - Package definitions for Homebrew
-  - `install-fish.sh` - Fish shell setup with Fisher and Bass
-  - `install-zsh.sh` - ZSH shell setup (optional)
+  - **machine-setup/unix/** - Cross-platform installation scripts
+    - `install.sh` - Install dependencies and packages
+    - `install-homebrew.sh` - Install Homebrew (works on macOS and Linux)
+    - `Brewfile` - Package definitions for Homebrew
+    - `install-fish.sh` - Fish shell setup with Fisher and Bass
+    - `install-zsh.sh` - ZSH shell setup (optional)
 
 - **machine-setup/mac/** - macOS-specific system setup
   - `set-defaults.sh` - macOS system preferences and defaults
@@ -112,36 +113,44 @@ The pre-bootstrap script will:
 After SSH is set up and Time Machine backup is complete:
 
 ```sh
-git clone git@github.com:yourusername/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-machine-setup/unix/bootstrap.sh
+git clone git@github.com:yourusername/dotfiles.git ~/Documents/dotfiles
+cd ~/Documents/dotfiles
+sh machine-setup/bootstrap.sh
 ```
 
-**With optional macOS setup:**
+The bootstrap will:
+- Prompt you to choose a shell (Fish, ZSH, or skip)
+- Or you can specify: `--shell fish`, `--shell zsh`, `--shell skip`
+
+**With shell choice and optional macOS setup:**
 ```sh
-# Run all optional setup (recommended for new machines)
-machine-setup/unix/bootstrap.sh --all
+# Fish shell with all macOS setup (recommended for new machines)
+machine-setup/bootstrap.sh --shell fish --all
+
+# ZSH shell without macOS setup
+machine-setup/bootstrap.sh --shell zsh
 
 # Or run individual components:
-machine-setup/unix/bootstrap.sh --set-defaults  # Apply macOS system defaults
-machine-setup/unix/bootstrap.sh --set-hostname  # Set macOS hostname
-machine-setup/unix/bootstrap.sh -d -n           # Both (same as --all)
+machine-setup/bootstrap.sh --shell fish --set-defaults  # Apply macOS system defaults
+machine-setup/bootstrap.sh --shell zsh --set-hostname   # Set macOS hostname
+machine-setup/bootstrap.sh --shell skip -d -n           # No shell, both macOS setups
 ```
 
 This will:
-1. Initialize git submodules (Claude Code setup)
-2. Configure git with your name and email
-3. Create symlinks for dotfiles (`.gitconfig`, `.zshrc`, etc.)
-4. Symlink Claude Code configuration to `~/.claude/`
-5. Symlink Ghostty configuration to `~/.config/ghostty/`
-6. Install Homebrew (on macOS or Linux)
-7. Install packages from Brewfile
-8. Setup Fish shell with Fisher and Bass (set as default)
-9. Set Ghostty as default terminal (macOS only)
-10. Optionally setup ZSH
-11. Run platform-specific installers
-12. Optionally apply macOS defaults (with `-d` flag)
-13. Optionally set macOS hostname (with `-n` flag)
+1. Prompt you to choose a shell (Fish or ZSH) unless `--shell` is specified
+2. Initialize git submodules (Claude Code setup)
+3. Configure git with your name and email
+4. Create symlinks for dotfiles (`.gitconfig`, `.zshrc` or `.config/fish/config.fish`, etc.)
+5. Create `~/.dotfiles` symlink pointing to your dotfiles directory
+6. Symlink Claude Code configuration to `~/.claude/`
+7. Symlink Ghostty configuration to `~/.config/ghostty/`
+8. Install Homebrew (on macOS or Linux)
+9. Install packages from Brewfile
+10. Setup chosen shell (Fish with Fisher and Bass, or ZSH)
+11. Set Ghostty as default terminal (macOS only, if Fish was chosen)
+12. Run platform-specific installers
+13. Optionally apply macOS defaults (with `-d` or `--set-defaults` flag)
+14. Optionally set macOS hostname (with `-n` or `--set-hostname` flag)
 
 ## Updating
 
@@ -170,9 +179,20 @@ This setup works on both **macOS** and **Linux**:
 
 ## Shells
 
-- **Fish** is the default shell (installed with Fisher plugin manager and Bass for bash compatibility)
-- **ZSH** is optional (configured with topic-centric approach)
-- Shell configs use `.zsh` files for ZSH (Fish uses Bass to run bash utilities)
+You choose which shell to install during bootstrap (or skip shell installation):
+
+- **Fish** - Modern, user-friendly shell with great defaults
+  - Installed with Fisher plugin manager and Bass for bash compatibility
+  - Fish-native configs in `*.fish` files
+  - Set as default shell and Ghostty configured to use it
+
+- **ZSH** - Powerful, customizable shell
+  - Configured with topic-centric approach
+  - Uses `*.zsh` files for configuration
+
+- **Skip** - No shell installation
+  - Just sets up dotfiles and configurations
+  - Use your existing shell setup
 
 ## Customization
 
