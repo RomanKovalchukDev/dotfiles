@@ -129,9 +129,19 @@ debug () {
 validate_config_dir () {
   debug "Checking ~/.config status..."
 
+  # Check for broken symlinks (they exist as links but -e returns false)
+  if [ -L "$HOME/.config" ] && [ ! -e "$HOME/.config" ]; then
+    debug "~/.config is a broken symlink pointing to: $(readlink $HOME/.config)"
+    warning "~/.config is a broken symlink, removing it..."
+    rm "$HOME/.config"
+  fi
+
   if [ -e "$HOME/.config" ]; then
     if [ -L "$HOME/.config" ]; then
       debug "~/.config exists as a symlink: $(readlink $HOME/.config)"
+      if [ ! -d "$HOME/.config" ]; then
+        fail "~/.config is a symlink but does not point to a directory. Please fix this:\n  rm ~/.config && mkdir ~/.config"
+      fi
     elif [ -f "$HOME/.config" ]; then
       debug "~/.config exists as a regular file"
       fail "~/.config exists but is a file, not a directory. Please fix this:\n  mv ~/.config ~/.config.backup && mkdir ~/.config"
@@ -141,12 +151,17 @@ validate_config_dir () {
       debug "~/.config exists but is neither file nor directory"
     fi
   else
-    debug "~/.config does not exist"
+    debug "~/.config does not exist, creating it..."
+    if mkdir -p "$HOME/.config"; then
+      debug "Successfully created ~/.config directory"
+    else
+      fail "Failed to create ~/.config directory"
+    fi
   fi
 
-  # Final check: ensure it's a directory if it exists
-  if [ -e "$HOME/.config" ] && [ ! -d "$HOME/.config" ]; then
-    fail "~/.config exists but is not a directory. Please fix this:\n  mv ~/.config ~/.config.backup && mkdir ~/.config"
+  # Final check: ensure it's a directory
+  if [ ! -d "$HOME/.config" ]; then
+    fail "~/.config is not a directory after validation"
   fi
 }
 
