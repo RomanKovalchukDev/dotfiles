@@ -16,7 +16,7 @@ set -U tide_context_always_display false
 # Prompt Appearance
 set -U tide_character_color brgreen
 set -U tide_character_color_failure brred
-set -U tide_character_icon '❯'
+set -U tide_character_icon '>'
 
 # Git colors
 set -U tide_git_color_branch brgreen
