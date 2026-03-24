@@ -2,7 +2,7 @@
 #
 # bootstrap installs things.
 
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/.."
 DOTFILES_ROOT=$(pwd -P)
 
 set -e
@@ -12,6 +12,7 @@ RUN_SET_DEFAULTS=false
 RUN_SET_HOSTNAME=false
 DRY_RUN=false
 AUTO_MODE="backup"  # Default to backup mode instead of prompting
+SHELL_CHOICE=""  # User's shell choice (zsh, fish, or skip)
 
 usage() {
   echo "Usage: bootstrap.sh [options]"
@@ -20,6 +21,7 @@ usage() {
   echo "  -a, --all             Run all optional setup (defaults + hostname)"
   echo "  -d, --set-defaults    Run macOS set-defaults.sh (sets system preferences)"
   echo "  -n, --set-hostname    Run macOS set-hostname.sh (sets computer hostname)"
+  echo "  --shell <zsh|fish|skip>  Choose shell to install (prompts if not specified)"
   echo "  -i, --interactive     Prompt for each file conflict (skip or backup)"
   echo "  -v, --verbose         Enable verbose logging"
   echo "  --dry-run             Preview what would be done without making changes"
@@ -45,6 +47,15 @@ while [[ $# -gt 0 ]]; do
     -n|--set-hostname)
       RUN_SET_HOSTNAME=true
       shift
+      ;;
+    --shell)
+      SHELL_CHOICE="$2"
+      if [ "$SHELL_CHOICE" != "zsh" ] && [ "$SHELL_CHOICE" != "fish" ] && [ "$SHELL_CHOICE" != "skip" ]; then
+        echo "Invalid shell choice: $SHELL_CHOICE"
+        echo "Must be 'zsh', 'fish', or 'skip'"
+        exit 1
+      fi
+      shift 2
       ;;
     -i|--interactive)
       AUTO_MODE=""
@@ -368,21 +379,48 @@ setup_dotfiles_symlink () {
   success 'dotfiles symlink created'
 }
 
+# Prompt for shell choice if not specified
+if [ -z "$SHELL_CHOICE" ] && [ "$DRY_RUN" != "true" ]; then
+  echo ""
+  echo "Which shell would you like to install and configure?"
+  echo "  1) Fish (modern, user-friendly shell with great defaults)"
+  echo "  2) ZSH (powerful, customizable shell)"
+  echo "  3) Skip shell installation"
+  echo ""
+  read -p "Enter choice [1-3]: " choice
+  case $choice in
+    1)
+      SHELL_CHOICE="fish"
+      ;;
+    2)
+      SHELL_CHOICE="zsh"
+      ;;
+    3)
+      SHELL_CHOICE="skip"
+      ;;
+    *)
+      echo "Invalid choice. Skipping shell installation."
+      SHELL_CHOICE="skip"
+      ;;
+  esac
+  echo ""
+fi
+
 setup_gitconfig
 setup_dotfiles_symlink
 install_dotfiles
 setup_claude_code
 setup_ghostty
 
-# Run installation script
+# Run installation script with shell choice
 info "installing dependencies"
-debug "Running machine-setup/unix/install.sh..."
+debug "Running machine-setup/unix/install.sh with shell: $SHELL_CHOICE"
 if [ "$DRY_RUN" == "true" ]; then
-  success "run machine-setup/unix/install.sh"
+  success "run machine-setup/unix/install.sh --shell $SHELL_CHOICE"
 else
   if [ "$VERBOSE" == "true" ]; then
     # In verbose mode, show all output directly
-    if sh machine-setup/unix/install.sh
+    if sh machine-setup/unix/install.sh --shell "$SHELL_CHOICE"
     then
       success "dependencies installed"
     else
@@ -391,7 +429,7 @@ else
     fi
   else
     # Normal mode: prefix each line with info
-    if sh machine-setup/unix/install.sh 2>&1 | while read -r data; do info "$data"; done
+    if sh machine-setup/unix/install.sh --shell "$SHELL_CHOICE" 2>&1 | while read -r data; do info "$data"; done
     then
       success "dependencies installed"
     else
