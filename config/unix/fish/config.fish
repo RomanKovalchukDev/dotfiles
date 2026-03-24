@@ -5,6 +5,7 @@
 # This allows Fish to use all ZSH configurations through the Bass plugin
 
 # Set dotfiles root
+# Bootstrap creates a ~/.dotfiles symlink pointing to the actual dotfiles location
 set -gx DOTFILES_ROOT $HOME/.dotfiles
 
 # Check if Bass is installed

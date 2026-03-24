@@ -363,7 +363,19 @@ setup_ghostty () {
   success 'Ghostty configuration linked'
 }
 
+setup_dotfiles_symlink () {
+  info 'setting up dotfiles symlink'
+
+  # Create ~/.dotfiles symlink pointing to the actual dotfiles location
+  # This allows Fish and other tools to find dotfiles at a consistent location
+  local overwrite_all=false backup_all=false skip_all=false
+  link_file "$DOTFILES_ROOT" "$HOME/.dotfiles"
+
+  success 'dotfiles symlink created'
+}
+
 setup_gitconfig
+setup_dotfiles_symlink
 install_dotfiles
 setup_claude_code
 setup_ghostty
