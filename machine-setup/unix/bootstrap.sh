@@ -262,10 +262,11 @@ link_file () {
       if [ "$backup" == "true" ]
       then
         if [ "$DRY_RUN" == "true" ]; then
-          success "move $dst to ${dst}.backup"
+          success "move $dst to ${dst}.backup.$(date +%Y%m%d_%H%M%S)"
         else
-          mv "$dst" "${dst}.backup"
-          success "moved $dst to ${dst}.backup"
+          local backup_name="${dst}.backup.$(date +%Y%m%d_%H%M%S)"
+          mv "$dst" "$backup_name"
+          success "moved $dst to $backup_name"
         fi
       fi
 
