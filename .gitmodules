@@ -1,0 +1,3 @@
+[submodule "ai/everything-claude-code"]
+	path = ai/everything-claude-code
+	url = git@github.com:RomanKovalchukDev/everything-claude-code.git

@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# Homebrew
+#
+# This installs some of the common dependencies needed (or at least desired)
+# using Homebrew.
+
+# Check for Homebrew
+if test ! $(which brew)
+then
+  echo "  Homebrew not found."
+  echo "  Installing Homebrew for you."
+
+  # Install Homebrew (works on both macOS and Linux)
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+  echo "  Homebrew installed successfully"
+  echo "  Note: Homebrew PATH will be configured by the calling script"
+else
+  echo "  Homebrew already installed at $(which brew)"
+fi
+
+# Link keg-only formulas that we want in PATH
+brew list | grep 'postgresql@' | xargs -I {} brew link {} --force 2>/dev/null
+
+exit 0
