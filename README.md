@@ -63,22 +63,66 @@ Special files in the hierarchy:
 
 ## Installation
 
-Run this on a new machine:
+### First Time Setup (New Machine)
+
+On a brand new machine, you need to set up SSH keys first:
+
+```sh
+# Download and run pre-bootstrap to setup SSH
+curl -fsSL https://raw.githubusercontent.com/yourusername/dotfiles/main/machine-setup/unix/pre-bootstrap.sh | bash
+```
+
+Or if you prefer to clone with HTTPS first:
 
 ```sh
 git clone https://github.com/yourusername/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
+machine-setup/unix/pre-bootstrap.sh
+```
+
+The pre-bootstrap script will:
+- Generate SSH keys if they don't exist
+- Add keys to ssh-agent and macOS keychain
+- Display your public key and open GitHub settings
+- Wait for you to add the key to GitHub
+- Test the SSH connection
+
+### Main Bootstrap
+
+After SSH is set up, run the main bootstrap:
+
+```sh
+git clone git@github.com:yourusername/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
 machine-setup/unix/bootstrap.sh
 ```
 
+**With optional macOS setup:**
+```sh
+# Apply macOS system defaults (key repeat, Finder settings, etc.)
+machine-setup/unix/bootstrap.sh --set-defaults
+
+# Set macOS hostname
+machine-setup/unix/bootstrap.sh --set-hostname
+
+# Both
+machine-setup/unix/bootstrap.sh -d -n
+```
+
 This will:
-1. Configure git with your name and email
-2. Create symlinks for dotfiles (`.gitconfig`, `.zshrc`, etc.)
-3. Install Homebrew (on macOS or Linux)
-4. Install packages from Brewfile
-5. Setup Fish shell with Fisher and Bass
-6. Optionally setup ZSH
-7. Run platform-specific installers
+1. Initialize git submodules (Claude Code setup)
+2. Configure git with your name and email
+3. Create symlinks for dotfiles (`.gitconfig`, `.zshrc`, etc.)
+4. Symlink Claude Code configuration to `~/.claude/`
+5. Symlink Ghostty configuration to `~/.config/ghostty/`
+6. Install Homebrew (on macOS or Linux)
+7. Install packages from Brewfile
+8. Setup Fish shell with Fisher and Bass (set as default)
+9. Set Ghostty as default terminal (macOS only)
+10. Optionally setup ZSH
+11. Run platform-specific installers
+12. Optionally apply macOS defaults (with `-d` flag)
+13. Optionally set macOS hostname (with `-n` flag)
 
 ## Updating
 
