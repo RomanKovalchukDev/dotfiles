@@ -20,14 +20,13 @@ usage() {
   echo "  -a, --all             Run all optional setup (defaults + hostname)"
   echo "  -d, --set-defaults    Run macOS set-defaults.sh (sets system preferences)"
   echo "  -n, --set-hostname    Run macOS set-hostname.sh (sets computer hostname)"
-  echo "  -o, --overwrite-all   Automatically overwrite existing files without prompting"
-  echo "  -b, --backup-all      Automatically backup existing files (default behavior)"
-  echo "  -i, --interactive     Prompt for each file conflict (instead of default backup)"
+  echo "  -i, --interactive     Prompt for each file conflict (skip or backup)"
   echo "  -v, --verbose         Enable verbose logging"
   echo "  --dry-run             Preview what would be done without making changes"
   echo "  -h, --help            Show this help message"
   echo ""
-  echo "By default, existing files are backed up automatically."
+  echo "By default, existing files are backed up automatically with timestamps."
+  echo "Overwriting is not supported - all existing files are preserved."
   echo ""
   exit 0
 }
@@ -45,14 +44,6 @@ while [[ $# -gt 0 ]]; do
       ;;
     -n|--set-hostname)
       RUN_SET_HOSTNAME=true
-      shift
-      ;;
-    -o|--overwrite-all)
-      AUTO_MODE="overwrite"
-      shift
-      ;;
-    -b|--backup-all)
-      AUTO_MODE="backup"
       shift
       ;;
     -i|--interactive)
@@ -140,8 +131,9 @@ validate_config_dir () {
   # Check for broken symlinks (they exist as links but -e returns false)
   if [ -L "$HOME/.config" ] && [ ! -e "$HOME/.config" ]; then
     debug "~/.config is a broken symlink pointing to: $(readlink $HOME/.config)"
-    warning "~/.config is a broken symlink, removing it..."
-    rm "$HOME/.config"
+    local backup_name="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
+    warning "~/.config is a broken symlink, backing up to $backup_name..."
+    mv "$HOME/.config" "$backup_name"
   fi
 
   if [ -e "$HOME/.config" ]; then
@@ -204,7 +196,7 @@ setup_gitconfig () {
 link_file () {
   local src=$1 dst=$2
 
-  local overwrite= backup= skip=
+  local backup= skip=
   local action=
 
   if [ -f "$dst" -o -d "$dst" -o -L "$dst" ]
@@ -217,21 +209,15 @@ link_file () {
       skip=true;
     else
       # Handle AUTO_MODE (global setting)
-      if [ "$AUTO_MODE" == "overwrite" ]; then
-        overwrite=true
-      elif [ "$AUTO_MODE" == "backup" ]; then
+      if [ "$AUTO_MODE" == "backup" ]; then
         backup=true
-      elif [ -z "$AUTO_MODE" ] && [ "$overwrite_all" != "true" ] && [ "$backup_all" != "true" ] && [ "$skip_all" != "true" ]
+      elif [ -z "$AUTO_MODE" ] && [ "$backup_all" != "true" ] && [ "$skip_all" != "true" ]
       then
         user "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
-        [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
+        [s]kip, [S]kip all, [b]ackup, [B]ackup all (recommended)?"
         read -n 1 action
 
         case "$action" in
-          o )
-            overwrite=true;;
-          O )
-            overwrite_all=true;;
           b )
             backup=true;;
           B )
@@ -245,19 +231,8 @@ link_file () {
         esac
       fi
 
-      overwrite=${overwrite:-$overwrite_all}
       backup=${backup:-$backup_all}
       skip=${skip:-$skip_all}
-
-      if [ "$overwrite" == "true" ]
-      then
-        if [ "$DRY_RUN" == "true" ]; then
-          success "remove $dst"
-        else
-          rm -rf "$dst"
-          success "removed $dst"
-        fi
-      fi
 
       if [ "$backup" == "true" ]
       then
