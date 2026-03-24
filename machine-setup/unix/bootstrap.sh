@@ -7,6 +7,41 @@ DOTFILES_ROOT=$(pwd -P)
 
 set -e
 
+# Parse command line flags
+RUN_SET_DEFAULTS=false
+RUN_SET_HOSTNAME=false
+
+usage() {
+  echo "Usage: bootstrap.sh [options]"
+  echo ""
+  echo "Options:"
+  echo "  -d, --set-defaults    Run macOS set-defaults.sh (sets system preferences)"
+  echo "  -n, --set-hostname    Run macOS set-hostname.sh (sets computer hostname)"
+  echo "  -h, --help            Show this help message"
+  echo ""
+  exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -d|--set-defaults)
+      RUN_SET_DEFAULTS=true
+      shift
+      ;;
+    -n|--set-hostname)
+      RUN_SET_HOSTNAME=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      ;;
+    *)
+      echo "Unknown option: $1"
+      usage
+      ;;
+  esac
+done
+
 echo ''
 
 # Initialize git submodules
@@ -176,9 +211,24 @@ setup_claude_code () {
   success 'Claude Code configuration linked'
 }
 
+setup_ghostty () {
+  info 'setting up Ghostty configuration'
+
+  # Create Ghostty config directory
+  mkdir -p "$HOME/.config/ghostty"
+
+  local overwrite_all=false backup_all=false skip_all=false
+
+  # Symlink Ghostty config
+  link_file "$DOTFILES_ROOT/config/unix/ghostty/config.symlink" "$HOME/.config/ghostty/config"
+
+  success 'Ghostty configuration linked'
+}
+
 setup_gitconfig
 install_dotfiles
 setup_claude_code
+setup_ghostty
 
 # Run installation script
 info "installing dependencies"
@@ -187,6 +237,29 @@ then
   success "dependencies installed"
 else
   fail "error installing dependencies"
+fi
+
+# Run optional macOS setup scripts
+if [ "$(uname -s)" == "Darwin" ]; then
+  if [ "$RUN_SET_DEFAULTS" == "true" ]; then
+    info "applying macOS system defaults"
+    if sh machine-setup/mac/set-defaults.sh
+    then
+      success "macOS defaults applied"
+    else
+      fail "error applying macOS defaults"
+    fi
+  fi
+
+  if [ "$RUN_SET_HOSTNAME" == "true" ]; then
+    info "setting macOS hostname"
+    if sh machine-setup/mac/set-hostname.sh
+    then
+      success "macOS hostname set"
+    else
+      fail "error setting macOS hostname"
+    fi
+  fi
 fi
 
 echo ''
