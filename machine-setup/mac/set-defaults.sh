@@ -209,8 +209,8 @@ step "Configuring Dock"
 # Prevent applications from bouncing in Dock
 defaults write com.apple.dock no-bouncing -bool true
 
-# Set the icon size of Dock items to 48 pixels
-defaults write com.apple.dock tilesize -int 48
+# Set the icon size of Dock items to 56 pixels
+defaults write com.apple.dock tilesize -int 56
 
 # Automatically hide and show the Dock
 defaults write com.apple.dock autohide -bool true
