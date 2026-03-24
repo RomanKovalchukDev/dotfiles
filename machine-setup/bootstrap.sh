@@ -177,7 +177,7 @@ validate_config_dir () {
 }
 
 setup_gitconfig () {
-  if ! [ -f config/unix/git/gitconfig.local.symlink ]
+  if ! [ -f config/unix/git/gitconfig.local.symlink ] && ! [ -f "$HOME/.gitconfig" ]
   then
     info 'setup gitconfig'
 
