@@ -43,6 +43,15 @@ if test -f $DOTFILES_ROOT/config/unix/git/aliases.fish
     source $DOTFILES_ROOT/config/unix/git/aliases.fish
 end
 
+if test -f $DOTFILES_ROOT/config/unix/zsh/aliases.fish
+    source $DOTFILES_ROOT/config/unix/zsh/aliases.fish
+end
+
+# 5. GRC colorization
+if test -f $DOTFILES_ROOT/config/unix/system/grc.fish
+    source $DOTFILES_ROOT/config/unix/system/grc.fish
+end
+
 # Note: Skipping ZSH-specific configs that don't translate to Fish:
 # - system/grc.zsh (uses ZSH-specific syntax)
 # - system/keys.zsh (ZSH keybindings)
