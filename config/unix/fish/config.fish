@@ -8,7 +8,12 @@
 set -gx DOTFILES_ROOT $HOME/.dotfiles
 
 # 1. PATH configurations
-# Use Bass for PATH since it's environment setup
+# Use native Fish PATH config
+if test -f $DOTFILES_ROOT/config/unix/system/_path.fish
+    source $DOTFILES_ROOT/config/unix/system/_path.fish
+end
+
+# Also source ZSH path for any additional paths
 if type -q bass
     if test -f $DOTFILES_ROOT/config/unix/system/_path.zsh
         bass source $DOTFILES_ROOT/config/unix/system/_path.zsh
