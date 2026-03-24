@@ -65,6 +65,26 @@ Special files in the hierarchy:
 
 ### First Time Setup (New Machine)
 
+**IMPORTANT: Backup your machine first!**
+
+Before running any setup scripts, create a Time Machine backup (macOS) or full system backup:
+
+**macOS Time Machine:**
+1. Connect an external drive
+2. System Settings → General → Time Machine
+3. Click "Back Up Now"
+4. Wait for backup to complete
+
+**Linux:**
+- Use `rsync`, `timeshift`, or your preferred backup tool
+- Backup `/home/` and important system configs
+
+Having a full system backup ensures you can restore everything if needed.
+
+---
+
+**Step 1: Setup SSH keys**
+
 On a brand new machine, you need to set up SSH keys first:
 
 ```sh
@@ -87,9 +107,9 @@ The pre-bootstrap script will:
 - Wait for you to add the key to GitHub
 - Test the SSH connection
 
-### Main Bootstrap
+**Step 2: Run main bootstrap**
 
-After SSH is set up, run the main bootstrap:
+After SSH is set up and Time Machine backup is complete:
 
 ```sh
 git clone git@github.com:yourusername/dotfiles.git ~/.dotfiles
