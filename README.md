@@ -119,14 +119,13 @@ machine-setup/unix/bootstrap.sh
 
 **With optional macOS setup:**
 ```sh
-# Apply macOS system defaults (key repeat, Finder settings, etc.)
-machine-setup/unix/bootstrap.sh --set-defaults
+# Run all optional setup (recommended for new machines)
+machine-setup/unix/bootstrap.sh --all
 
-# Set macOS hostname
-machine-setup/unix/bootstrap.sh --set-hostname
-
-# Both
-machine-setup/unix/bootstrap.sh -d -n
+# Or run individual components:
+machine-setup/unix/bootstrap.sh --set-defaults  # Apply macOS system defaults
+machine-setup/unix/bootstrap.sh --set-hostname  # Set macOS hostname
+machine-setup/unix/bootstrap.sh -d -n           # Both (same as --all)
 ```
 
 This will:

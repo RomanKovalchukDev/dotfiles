@@ -15,6 +15,7 @@ usage() {
   echo "Usage: bootstrap.sh [options]"
   echo ""
   echo "Options:"
+  echo "  -a, --all             Run all optional setup (defaults + hostname)"
   echo "  -d, --set-defaults    Run macOS set-defaults.sh (sets system preferences)"
   echo "  -n, --set-hostname    Run macOS set-hostname.sh (sets computer hostname)"
   echo "  -h, --help            Show this help message"
@@ -24,6 +25,11 @@ usage() {
 
 while [[ $# -gt 0 ]]; do
   case $1 in
+    -a|--all)
+      RUN_SET_DEFAULTS=true
+      RUN_SET_HOSTNAME=true
+      shift
+      ;;
     -d|--set-defaults)
       RUN_SET_DEFAULTS=true
       shift
