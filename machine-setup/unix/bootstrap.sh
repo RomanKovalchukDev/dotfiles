@@ -51,6 +51,10 @@ while [[ $# -gt 0 ]]; do
       AUTO_MODE="backup"
       shift
       ;;
+    -v|--verbose)
+      VERBOSE=true
+      shift
+      ;;
     --dry-run)
       DRY_RUN=true
       shift
@@ -116,8 +120,31 @@ warning () {
   printf "\r\033[2K  [\033[0;33mWARN\033[0m] $1\n"
 }
 
+debug () {
+  if [ "$VERBOSE" == "true" ]; then
+    printf "\r  [ \033[00;36mDEBUG\033[0m ] $1\n"
+  fi
+}
+
 validate_config_dir () {
-  # Check if ~/.config exists and is not a directory
+  debug "Checking ~/.config status..."
+
+  if [ -e "$HOME/.config" ]; then
+    if [ -L "$HOME/.config" ]; then
+      debug "~/.config exists as a symlink: $(readlink $HOME/.config)"
+    elif [ -f "$HOME/.config" ]; then
+      debug "~/.config exists as a regular file"
+      fail "~/.config exists but is a file, not a directory. Please fix this:\n  mv ~/.config ~/.config.backup && mkdir ~/.config"
+    elif [ -d "$HOME/.config" ]; then
+      debug "~/.config exists as a directory (OK)"
+    else
+      debug "~/.config exists but is neither file nor directory"
+    fi
+  else
+    debug "~/.config does not exist"
+  fi
+
+  # Final check: ensure it's a directory if it exists
   if [ -e "$HOME/.config" ] && [ ! -d "$HOME/.config" ]; then
     fail "~/.config exists but is not a directory. Please fix this:\n  mv ~/.config ~/.config.backup && mkdir ~/.config"
   fi
@@ -255,10 +282,15 @@ setup_claude_code () {
   info 'setting up Claude Code configuration'
 
   # Create ~/.claude directory
+  debug "Creating ~/.claude directory..."
   if [ "$DRY_RUN" == "true" ]; then
     success "create directory $HOME/.claude"
   else
-    mkdir -p "$HOME/.claude"
+    if mkdir -p "$HOME/.claude" 2>&1; then
+      debug "Successfully created ~/.claude directory"
+    else
+      fail "Failed to create ~/.claude directory"
+    fi
   fi
 
   local overwrite_all=false backup_all=false skip_all=false
@@ -293,15 +325,24 @@ setup_ghostty () {
   validate_config_dir
 
   # Create Ghostty config directory
+  debug "Creating ~/.config/ghostty directory..."
+  debug "HOME is: $HOME"
+  debug "Current directory is: $(pwd)"
+
   if [ "$DRY_RUN" == "true" ]; then
     success "create directory $HOME/.config/ghostty"
   else
-    mkdir -p "$HOME/.config/ghostty"
+    if mkdir -p "$HOME/.config/ghostty" 2>&1; then
+      debug "Successfully created ~/.config/ghostty directory"
+    else
+      fail "Failed to create ~/.config/ghostty directory. Error: $?"
+    fi
   fi
 
   local overwrite_all=false backup_all=false skip_all=false
 
   # Symlink Ghostty config
+  debug "Linking ghostty config from $DOTFILES_ROOT/config/unix/ghostty/config to $HOME/.config/ghostty/config"
   link_file "$DOTFILES_ROOT/config/unix/ghostty/config" "$HOME/.config/ghostty/config"
 
   success 'Ghostty configuration linked'
@@ -314,14 +355,26 @@ setup_ghostty
 
 # Run installation script
 info "installing dependencies"
+debug "Running machine-setup/unix/install.sh..."
 if [ "$DRY_RUN" == "true" ]; then
   success "run machine-setup/unix/install.sh"
 else
-  if sh machine-setup/unix/install.sh 2>&1 | while read -r data; do info "$data"; done
-  then
-    success "dependencies installed"
+  if [ "$VERBOSE" == "true" ]; then
+    # In verbose mode, show all output directly
+    if sh machine-setup/unix/install.sh
+    then
+      success "dependencies installed"
+    else
+      fail "error installing dependencies"
+    fi
   else
-    fail "error installing dependencies"
+    # Normal mode: prefix each line with info
+    if sh machine-setup/unix/install.sh 2>&1 | while read -r data; do info "$data"; done
+    then
+      success "dependencies installed"
+    else
+      fail "error installing dependencies"
+    fi
   fi
 fi
 
