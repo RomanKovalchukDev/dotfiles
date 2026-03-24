@@ -17,6 +17,9 @@ set -U tide_context_always_display false
 set -U tide_character_color brgreen
 set -U tide_character_color_failure brred
 set -U tide_character_icon '>'
+set -U tide_character_vi_icon_default '>'
+set -U tide_character_vi_icon_replace '>'
+set -U tide_character_vi_icon_visual '>'
 
 # Git colors
 set -U tide_git_color_branch brgreen
