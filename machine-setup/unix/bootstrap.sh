@@ -28,7 +28,7 @@ fail () {
 }
 
 setup_gitconfig () {
-  if ! [ -f config/mac/tools/git/gitconfig.local.symlink ]
+  if ! [ -f config/unix/git/gitconfig.local.symlink ]
   then
     info 'setup gitconfig'
 
@@ -43,7 +43,7 @@ setup_gitconfig () {
     user ' - What is your github author email?'
     read -e git_authoremail
 
-    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" config/mac/tools/git/gitconfig.local.symlink.example > config/mac/tools/git/gitconfig.local.symlink
+    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" config/unix/git/gitconfig.local.symlink.example > config/unix/git/gitconfig.local.symlink
 
     success 'gitconfig'
   fi
@@ -140,16 +140,13 @@ install_dotfiles () {
 setup_gitconfig
 install_dotfiles
 
-# If we're on a Mac, let's install and setup homebrew.
-if [ "$(uname -s)" == "Darwin" ]
+# Run installation script
+info "installing dependencies"
+if sh machine-setup/unix/install.sh 2>&1 | while read -r data; do info "$data"; done
 then
-  info "installing dependencies"
-  if source config/mac/bin/dot | while read -r data; do info "$data"; done
-  then
-    success "dependencies installed"
-  else
-    fail "error installing dependencies"
-  fi
+  success "dependencies installed"
+else
+  fail "error installing dependencies"
 fi
 
 echo ''
