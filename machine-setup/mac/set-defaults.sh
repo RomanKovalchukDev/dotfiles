@@ -67,6 +67,10 @@ defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 # Disable Resume system-wide
 defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
 
+# Disable reopening windows when logging back in
+defaults write com.apple.loginwindow TALLogoutSavesState -bool false
+defaults write com.apple.loginwindow LoginwindowLaunchesRelaunchApps -bool false
+
 # Disable automatic termination of inactive apps
 defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
 
@@ -133,7 +137,7 @@ defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/Desk
 
 # Show icons for hard drives, servers, and removable media on the desktop
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
+defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
 defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
 defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 
@@ -205,8 +209,11 @@ step "Configuring Dock"
 # Prevent applications from bouncing in Dock
 defaults write com.apple.dock no-bouncing -bool true
 
-# Set the icon size of Dock items to 72 pixels
-defaults write com.apple.dock tilesize -int 72
+# Set the icon size of Dock items to 48 pixels
+defaults write com.apple.dock tilesize -int 48
+
+# Automatically hide and show the Dock
+defaults write com.apple.dock autohide -bool true
 
 # Wipe all (default) app icons from the Dock
 # This is only really useful when setting up a new Mac, or if you don't use
