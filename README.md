@@ -44,12 +44,28 @@ Application configuration files organized by platform.
 
 ### ai/
 
-Claude Code configuration and skills (49 skills available).
+AI coding assistant configuration using layered architecture.
 
-- `.claude.json` - Project-level Claude Code settings
-- `CLAUDE.md` - Documentation for Claude Code
-- `skills/` - Claude Code skills directory
-- `hooks/` - Claude Code hooks for automation
+**Layered Architecture:**
+- **Layer 1**: Claude Code Core (base system)
+- **Layer 2**: Everything Claude Code Plugin (60 commands, 28 agents, 119 skills)
+- **Layer 3**: Personal configs (CLAUDE.md, agents, skills, statusline)
+
+**Structure:**
+- `.claude/CLAUDE.md` - Personal preferences and rules
+- `.claude/settings.json` - Security, statusline, permissions
+- `.claude/agents/` - 4 custom Laravel-focused agents
+- `.claude/skills/` - ~49 domain-specific skills
+- `.claude/rules/` - Laravel PHP guidelines
+- `scripts/statusline.sh` - Custom statusline (repo + context %)
+- `README.md` - Full AI setup documentation
+
+**Installation:**
+```bash
+machine-setup/unix/install-ai.sh
+```
+
+This installs ECC plugin (community toolkit) + symlinks personal configs from `ai/.claude/`
 
 ## Components
 
@@ -138,19 +154,23 @@ machine-setup/bootstrap.sh --shell skip -d -n           # No shell, both macOS s
 
 This will:
 1. Prompt you to choose a shell (Fish or ZSH) unless `--shell` is specified
-2. Initialize git submodules (Claude Code setup)
-3. Configure git with your name and email
-4. Create symlinks for dotfiles (`.gitconfig`, `.zshrc` or `.config/fish/config.fish`, etc.)
-5. Create `~/.dotfiles` symlink pointing to your dotfiles directory
-6. Symlink Claude Code configuration to `~/.claude/`
-7. Symlink Ghostty configuration to `~/.config/ghostty/`
-8. Install Homebrew (on macOS or Linux)
-9. Install packages from Brewfile
-10. Setup chosen shell (Fish with Fisher and Bass, or ZSH)
-11. Set Ghostty as default terminal (macOS only, if Fish was chosen)
-12. Run platform-specific installers
-13. Optionally apply macOS defaults (with `-d` or `--set-defaults` flag)
-14. Optionally set macOS hostname (with `-n` or `--set-hostname` flag)
+2. Configure git with your name and email
+3. Create symlinks for dotfiles (`.gitconfig`, `.zshrc` or `.config/fish/config.fish`, etc.)
+4. Create `~/.dotfiles` symlink pointing to your dotfiles directory
+5. Symlink Ghostty configuration to `~/.config/ghostty/`
+6. Install Homebrew (on macOS or Linux)
+7. Install packages from Brewfile
+8. Setup chosen shell (Fish with Fisher and Bass, or ZSH)
+9. Set Ghostty as default terminal (macOS only, if Fish was chosen)
+10. Run platform-specific installers
+11. Optionally apply macOS defaults (with `-d` or `--set-defaults` flag)
+12. Optionally set macOS hostname (with `-n` or `--set-hostname` flag)
+
+**AI Setup (Optional):**
+After bootstrap, install AI coding assistant configuration:
+```bash
+machine-setup/unix/install-ai.sh
+```
 
 ## Updating
 
