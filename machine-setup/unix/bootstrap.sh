@@ -11,7 +11,7 @@ set -e
 RUN_SET_DEFAULTS=false
 RUN_SET_HOSTNAME=false
 DRY_RUN=false
-AUTO_MODE=""
+AUTO_MODE="backup"  # Default to backup mode instead of prompting
 
 usage() {
   echo "Usage: bootstrap.sh [options]"
@@ -21,9 +21,13 @@ usage() {
   echo "  -d, --set-defaults    Run macOS set-defaults.sh (sets system preferences)"
   echo "  -n, --set-hostname    Run macOS set-hostname.sh (sets computer hostname)"
   echo "  -o, --overwrite-all   Automatically overwrite existing files without prompting"
-  echo "  -b, --backup-all      Automatically backup existing files without prompting"
+  echo "  -b, --backup-all      Automatically backup existing files (default behavior)"
+  echo "  -i, --interactive     Prompt for each file conflict (instead of default backup)"
+  echo "  -v, --verbose         Enable verbose logging"
   echo "  --dry-run             Preview what would be done without making changes"
   echo "  -h, --help            Show this help message"
+  echo ""
+  echo "By default, existing files are backed up automatically."
   echo ""
   exit 0
 }
@@ -49,6 +53,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     -b|--backup-all)
       AUTO_MODE="backup"
+      shift
+      ;;
+    -i|--interactive)
+      AUTO_MODE=""
       shift
       ;;
     -v|--verbose)
@@ -208,14 +216,12 @@ link_file () {
     then
       skip=true;
     else
-      # Handle AUTO_MODE first
+      # Handle AUTO_MODE (global setting)
       if [ "$AUTO_MODE" == "overwrite" ]; then
-        overwrite_all=true
         overwrite=true
       elif [ "$AUTO_MODE" == "backup" ]; then
-        backup_all=true
         backup=true
-      elif [ "$overwrite_all" != "true" ] && [ "$backup_all" != "true" ] && [ "$skip_all" != "true" ]
+      elif [ -z "$AUTO_MODE" ] && [ "$overwrite_all" != "true" ] && [ "$backup_all" != "true" ] && [ "$skip_all" != "true" ]
       then
         user "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
         [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
@@ -284,7 +290,10 @@ link_file () {
 install_dotfiles () {
   info 'installing dotfiles'
 
-  local overwrite_all=false backup_all=false skip_all=false
+  # Don't set local variables if AUTO_MODE is set globally
+  if [ -z "$AUTO_MODE" ]; then
+    local overwrite_all=false backup_all=false skip_all=false
+  fi
 
   for src in $(find -H "$DOTFILES_ROOT/config" -name '*.symlink' -not -path '*.git*')
   do
@@ -308,7 +317,10 @@ setup_claude_code () {
     fi
   fi
 
-  local overwrite_all=false backup_all=false skip_all=false
+  # Don't set local variables if AUTO_MODE is set globally
+  if [ -z "$AUTO_MODE" ]; then
+    local overwrite_all=false backup_all=false skip_all=false
+  fi
 
   # Symlink commands
   link_file "$DOTFILES_ROOT/ai/everything-claude-code/commands" "$HOME/.claude/commands"
@@ -354,7 +366,10 @@ setup_ghostty () {
     fi
   fi
 
-  local overwrite_all=false backup_all=false skip_all=false
+  # Don't set local variables if AUTO_MODE is set globally
+  if [ -z "$AUTO_MODE" ]; then
+    local overwrite_all=false backup_all=false skip_all=false
+  fi
 
   # Symlink Ghostty config
   debug "Linking ghostty config from $DOTFILES_ROOT/config/unix/ghostty/config to $HOME/.config/ghostty/config"
@@ -368,7 +383,10 @@ setup_dotfiles_symlink () {
 
   # Create ~/.dotfiles symlink pointing to the actual dotfiles location
   # This allows Fish and other tools to find dotfiles at a consistent location
-  local overwrite_all=false backup_all=false skip_all=false
+  # Don't set local variables if AUTO_MODE is set globally
+  if [ -z "$AUTO_MODE" ]; then
+    local overwrite_all=false backup_all=false skip_all=false
+  fi
   link_file "$DOTFILES_ROOT" "$HOME/.dotfiles"
 
   success 'dotfiles symlink created'
