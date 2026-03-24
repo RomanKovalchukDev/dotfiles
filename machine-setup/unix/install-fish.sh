@@ -39,13 +39,35 @@ else
   echo "  Fish config symlinked"
 fi
 
+# Symlink fish_plugins (Fisher plugin list)
+echo "  Symlinking Fish plugins list..."
+if [ -L "$HOME/.config/fish/fish_plugins" ] || [ -f "$HOME/.config/fish/fish_plugins" ]; then
+  echo "  fish_plugins already exists at ~/.config/fish/fish_plugins"
+  read -p "  Overwrite? [y/N] " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    rm -f "$HOME/.config/fish/fish_plugins"
+    ln -s "$DOTFILES_ROOT/config/unix/fish/fish_plugins.symlink" "$HOME/.config/fish/fish_plugins"
+    echo "  fish_plugins symlinked"
+  else
+    echo "  Skipping fish_plugins symlink"
+  fi
+else
+  ln -s "$DOTFILES_ROOT/config/unix/fish/fish_plugins.symlink" "$HOME/.config/fish/fish_plugins"
+  echo "  fish_plugins symlinked"
+fi
+
 # Install Fisher (Fish plugin manager)
 echo "  Installing Fisher..."
 fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher"
 
-# Install Bass (run bash utilities in Fish)
-echo "  Installing Bass plugin..."
-fish -c "fisher install edc/bass"
+# Install all plugins from fish_plugins file (Tide, Z, etc.)
+echo "  Installing Fish plugins from fish_plugins..."
+fish -c "fisher update"
+
+# Configure Tide theme
+echo "  Configuring Tide prompt theme..."
+fish "$DOTFILES_ROOT/config/unix/fish/configure-tide.fish"
 
 # Add Fish to allowed shells if not already there
 FISH_PATH=$(which fish)
