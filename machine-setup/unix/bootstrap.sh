@@ -9,6 +9,14 @@ set -e
 
 echo ''
 
+# Initialize git submodules
+if [ -f .gitmodules ]; then
+  echo "Initializing git submodules..."
+  git submodule update --init --recursive
+fi
+
+echo ''
+
 info () {
   printf "\r  [ \033[00;34m..\033[0m ] $1\n"
 }
