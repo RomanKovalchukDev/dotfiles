@@ -145,8 +145,40 @@ install_dotfiles () {
   done
 }
 
+setup_claude_code () {
+  info 'setting up Claude Code configuration'
+
+  # Create ~/.claude directory
+  mkdir -p "$HOME/.claude"
+
+  local overwrite_all=false backup_all=false skip_all=false
+
+  # Symlink commands
+  link_file "$DOTFILES_ROOT/ai/everything-claude-code/commands" "$HOME/.claude/commands"
+
+  # Symlink agents
+  link_file "$DOTFILES_ROOT/ai/everything-claude-code/agents" "$HOME/.claude/agents"
+
+  # Symlink skills
+  link_file "$DOTFILES_ROOT/ai/everything-claude-code/.claude/skills" "$HOME/.claude/skills"
+
+  # Symlink other .claude subdirectories
+  for dir in "$DOTFILES_ROOT/ai/everything-claude-code/.claude"/*; do
+    if [ -d "$dir" ]; then
+      dirname=$(basename "$dir")
+      # Skip skills (already handled), commands (at root level), and agents (at root level)
+      if [ "$dirname" != "skills" ] && [ "$dirname" != "commands" ] && [ "$dirname" != "agents" ]; then
+        link_file "$dir" "$HOME/.claude/$dirname"
+      fi
+    fi
+  done
+
+  success 'Claude Code configuration linked'
+}
+
 setup_gitconfig
 install_dotfiles
+setup_claude_code
 
 # Run installation script
 info "installing dependencies"
