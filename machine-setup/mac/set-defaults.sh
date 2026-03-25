@@ -60,18 +60,6 @@ defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 # Automatically quit printer app once the print jobs complete
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
-# COMMENTED OUT: This breaks sharing extensions and other sandboxed features
-# Disable the "Are you sure you want to open this application?" dialog
-# defaults write com.apple.LaunchServices LSQuarantine -bool false
-
-# COMMENTED OUT: Disable Resume system-wide
-# These settings prevent macOS from restoring your apps/windows after restart.
-# This gives you a clean slate on each restart but loses your session.
-# Uncomment if you prefer to start fresh after every restart.
-# defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
-# defaults write com.apple.loginwindow TALLogoutSavesState -bool false
-# defaults write com.apple.loginwindow LoginwindowLaunchesRelaunchApps -bool false
-
 # Disable automatic termination of inactive apps
 defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
 
