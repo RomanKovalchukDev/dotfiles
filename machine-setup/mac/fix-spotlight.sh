@@ -47,8 +47,18 @@ echo -e "${GREEN}✓${NC} Spotlight reloaded"
 echo ""
 echo -e "${BLUE}Step 4: Rebuilding Spotlight index${NC}"
 echo -e "${YELLOW}Note: This will take several minutes depending on your disk size${NC}"
-sudo mdutil -E /
-echo -e "${GREEN}✓${NC} Index rebuild started"
+
+# Try to rebuild index, handle "unknown indexing state" error on newer macOS
+if sudo mdutil -E / 2>&1 | grep -q "unknown indexing state"; then
+    echo -e "${YELLOW}⚠${NC} Direct rebuild failed, trying alternative method..."
+    # Disable and re-enable indexing as alternative
+    sudo mdutil -i off /
+    sleep 2
+    sudo mdutil -i on /
+    echo -e "${GREEN}✓${NC} Index rebuild started (alternative method)"
+else
+    echo -e "${GREEN}✓${NC} Index rebuild started"
+fi
 
 echo ""
 echo -e "${BLUE}Step 5: Restarting Spotlight${NC}"
