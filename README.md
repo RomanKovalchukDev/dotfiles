@@ -52,20 +52,33 @@ AI coding assistant configuration using layered architecture.
 - **Layer 3**: Personal configs (CLAUDE.md, agents, skills, statusline)
 
 **Structure:**
-- `.claude/CLAUDE.md` - Personal preferences and rules
-- `.claude/settings.json` - Security, statusline, permissions
-- `.claude/agents/` - 4 custom Laravel-focused agents
-- `.claude/skills/` - ~49 domain-specific skills
-- `.claude/rules/` - Laravel PHP guidelines
+- `.claude/CLAUDE.md` - Personal preferences and coding standards
+  - C# / WPF Desktop Development
+  - Go Development
+  - Swift Development
+  - Flutter / Dart
+  - Kotlin
+  - C++
+  - Python
+- `.claude/settings.json` - Security deny list, statusline, permissions
+- `.claude/agents/` - Your custom agents (empty by default)
+- `.claude/skills/` - Your custom skills (empty by default)
+  - `SKILL_TEMPLATE.md` - Template for creating skills
+- `.claude/rules/` - Your custom rules (empty by default)
 - `scripts/statusline.sh` - Custom statusline (repo + context %)
 - `README.md` - Full AI setup documentation
+- `USAGE_GUIDE.md` - How to use ECC with your development stack
 
 **Installation:**
+
+AI setup is automatically included in `bootstrap.sh`. To install manually:
 ```bash
 machine-setup/unix/install-ai.sh
 ```
 
-This installs ECC plugin (community toolkit) + symlinks personal configs from `ai/.claude/`
+This installs ECC plugin (community toolkit) + language-specific rules + symlinks personal configs from `ai/.claude/`
+
+See `ai/README.md` for detailed documentation and `ai/USAGE_GUIDE.md` for language-specific usage examples.
 
 ## Components
 
@@ -157,20 +170,17 @@ This will:
 2. Configure git with your name and email
 3. Create symlinks for dotfiles (`.gitconfig`, `.zshrc` or `.config/fish/config.fish`, etc.)
 4. Create `~/.dotfiles` symlink pointing to your dotfiles directory
-5. Symlink Ghostty configuration to `~/.config/ghostty/`
-6. Install Homebrew (on macOS or Linux)
-7. Install packages from Brewfile
-8. Setup chosen shell (Fish with Fisher and Bass, or ZSH)
-9. Set Ghostty as default terminal (macOS only, if Fish was chosen)
-10. Run platform-specific installers
-11. Optionally apply macOS defaults (with `-d` or `--set-defaults` flag)
-12. Optionally set macOS hostname (with `-n` or `--set-hostname` flag)
+5. Install AI coding assistant configuration (Claude Code + ECC plugin)
+6. Symlink Ghostty configuration to `~/.config/ghostty/`
+7. Install Homebrew (on macOS or Linux)
+8. Install packages from Brewfile
+9. Setup chosen shell (Fish with Fisher and Bass, or ZSH)
+10. Set Ghostty as default terminal (macOS only, if Fish was chosen)
+11. Run platform-specific installers
+12. Optionally apply macOS defaults (with `-d` or `--set-defaults` flag)
+13. Optionally set macOS hostname (with `-n` or `--set-hostname` flag)
 
-**AI Setup (Optional):**
-After bootstrap, install AI coding assistant configuration:
-```bash
-machine-setup/unix/install-ai.sh
-```
+**Note:** If Claude Code CLI is not installed, AI setup will be skipped with a warning. Install Claude Code from https://code.claude.com and re-run bootstrap to complete AI setup.
 
 ## Updating
 
@@ -186,6 +196,23 @@ To update dotfiles repository:
 ```sh
 cd ~/.dotfiles
 git pull
+```
+
+To update AI configuration:
+
+```sh
+# Update ECC plugin
+claude <<EOF
+/plugin update everything-claude-code@everything-claude-code
+EOF
+
+# Update ECC rules (if everything-claude-code repo exists)
+cd ~/Documents/PersonalProjects/setup/everything-claude-code
+git pull
+cd ~/.dotfiles
+machine-setup/unix/install-ai.sh
+
+# Personal configs update automatically (symlinked from dotfiles)
 ```
 
 ## Cross-Platform Support

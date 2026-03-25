@@ -30,6 +30,12 @@ usage() {
   echo "By default, existing files are backed up automatically with timestamps."
   echo "Overwriting is not supported - all existing files are preserved."
   echo ""
+  echo "What gets installed:"
+  echo "  - Dotfiles (config files, shell configs, git setup)"
+  echo "  - AI Configuration (Claude Code + ECC plugin)"
+  echo "  - Terminal (Ghostty configuration)"
+  echo "  - Dependencies (via machine-setup/unix/install.sh)"
+  echo ""
   exit 0
 }
 
@@ -290,46 +296,48 @@ install_dotfiles () {
 }
 
 setup_claude_code () {
-  info 'setting up Claude Code configuration'
+  info 'setting up AI configuration (Claude Code)'
 
-  # Create ~/.claude directory
-  debug "Creating ~/.claude directory..."
   if [ "$DRY_RUN" == "true" ]; then
-    success "create directory $HOME/.claude"
-  else
-    if mkdir -p "$HOME/.claude" 2>&1; then
-      debug "Successfully created ~/.claude directory"
+    success "run machine-setup/unix/install-ai.sh"
+    echo "  Would install:"
+    echo "    - ECC plugin (60+ commands, 28 agents, 119 skills)"
+    echo "    - Language-specific rules (C#, Go, Swift, Flutter, Kotlin, C++, Python)"
+    echo "    - Personal configs (CLAUDE.md, settings.json, statusline)"
+    return
+  fi
+
+  # Check if Claude Code CLI is installed
+  if ! command -v claude &> /dev/null; then
+    warning "Claude Code CLI not found, skipping AI setup"
+    warning "Install Claude Code from https://code.claude.com and re-run bootstrap"
+    return
+  fi
+
+  # Run the AI installation script
+  debug "Running machine-setup/unix/install-ai.sh"
+
+  # Export DOTFILES_ROOT so install-ai.sh can find dotfiles
+  export DOTFILES_DIR="$DOTFILES_ROOT"
+
+  if [ "$VERBOSE" == "true" ]; then
+    # Show all output in verbose mode
+    if sh machine-setup/unix/install-ai.sh; then
+      success "AI configuration installed"
     else
-      fail "Failed to create ~/.claude directory"
+      warning "AI configuration setup encountered errors (continuing...)"
+    fi
+  else
+    # Normal mode: show progress
+    if sh machine-setup/unix/install-ai.sh 2>&1 | while read -r data; do debug "$data"; done; then
+      success "AI configuration installed"
+      echo "    - ECC plugin (60+ commands, 28 agents, 119 skills)"
+      echo "    - Language-specific rules (C#, Go, Swift, Flutter, Kotlin, C++, Python)"
+      echo "    - Personal configs (CLAUDE.md, settings.json, statusline)"
+    else
+      warning "AI configuration setup encountered errors (continuing...)"
     fi
   fi
-
-  # Don't set local variables if AUTO_MODE is set globally
-  if [ -z "$AUTO_MODE" ]; then
-    local overwrite_all=false backup_all=false skip_all=false
-  fi
-
-  # Symlink commands
-  link_file "$DOTFILES_ROOT/ai/everything-claude-code/commands" "$HOME/.claude/commands"
-
-  # Symlink agents
-  link_file "$DOTFILES_ROOT/ai/everything-claude-code/agents" "$HOME/.claude/agents"
-
-  # Symlink skills
-  link_file "$DOTFILES_ROOT/ai/everything-claude-code/.claude/skills" "$HOME/.claude/skills"
-
-  # Symlink other .claude subdirectories
-  for dir in "$DOTFILES_ROOT/ai/everything-claude-code/.claude"/*; do
-    if [ -d "$dir" ]; then
-      dirname=$(basename "$dir")
-      # Skip skills (already handled), commands (at root level), and agents (at root level)
-      if [ "$dirname" != "skills" ] && [ "$dirname" != "commands" ] && [ "$dirname" != "agents" ]; then
-        link_file "$dir" "$HOME/.claude/$dirname"
-      fi
-    fi
-  done
-
-  success 'Claude Code configuration linked'
 }
 
 setup_ghostty () {

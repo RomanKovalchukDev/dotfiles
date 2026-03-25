@@ -30,7 +30,8 @@ ai/
 │   └── rules/                    # Your custom rules (empty by default)
 ├── scripts/
 │   └── statusline.sh             # Custom statusline (repo + context %)
-└── README.md                     # This file
+├── README.md                     # This file
+└── USAGE_GUIDE.md                # How to use ECC with your dev stack
 ```
 
 ## Installation
@@ -78,6 +79,8 @@ This will:
 - **Custom rules**: Your project-specific rules (add as needed)
 
 ## Usage
+
+**See [USAGE_GUIDE.md](USAGE_GUIDE.md) for detailed examples of how to use ECC with each language in your stack.**
 
 ### Commands
 ```bash
