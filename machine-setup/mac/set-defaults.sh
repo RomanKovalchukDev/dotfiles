@@ -43,29 +43,11 @@ sudo nvram SystemAudioVolume=" "
 # Set sidebar icon size to medium
 defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 2
 
-# Increase window resize speed for Cocoa applications
-defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
-
-# Expand save panel by default
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
-
-# Expand print panel by default
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
-
 # Save to disk (not to iCloud) by default
 defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 
 # Automatically quit printer app once the print jobs complete
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
-
-# Disable automatic termination of inactive apps
-defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
-
-# Reveal IP address, hostname, OS version, etc. when clicking the clock
-# in the login window
-sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
 # Disable smart quotes as they’re annoying when typing code
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
@@ -74,30 +56,6 @@ defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 
 success "General settings configured"
-
-###############################################################################
-# Keyboard and input                                                          #
-###############################################################################
-
-step "Configuring keyboard and input"
-
-# Enable full keyboard access for all controls
-# (e.g. enable Tab in modal dialogs)
-defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
-
-success "Keyboard and input configured"
-
-###############################################################################
-# Screen                                                                      #
-###############################################################################
-
-step "Configuring screen settings"
-
-# Require password immediately after sleep or screen saver begins
-defaults write com.apple.screensaver askForPassword -int 1
-defaults write com.apple.screensaver askForPasswordDelay -int 0
-
-success "Screen settings configured"
 
 ###############################################################################
 # Finder                                                                      #
@@ -133,39 +91,12 @@ defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 
 # Use list view in all Finder windows by default
 # Four-letter codes for the other view modes: `icnv`, `clmv`, `Flwv`
-defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
-
-# Disable the warning before emptying the Trash
-defaults write com.apple.finder WarnOnEmptyTrash -bool false
+defaults write com.apple.Finder FXPreferredViewStyle Nlsv
 
 # Show the ~/Library folder
 chflags nohidden ~/Library
 
-# Show the ~/Users folder
-chflags nohidden /Users
-
-# Expand the following File Info panes:
-# “General”, “Open with”, and “Sharing & Permissions”
-defaults write com.apple.finder FXInfoPanesExpanded -dict \
-	General -bool true \
-	OpenWith -bool true \
-	Privileges -bool true
-
 success "Finder configured"
-
-###############################################################################
-# Screenshots                                                                 #
-###############################################################################
-
-step "Configuring screenshots"
-
-# Exclude date and time in screenshot filenames
-defaults write com.apple.screencapture "include-date" -bool false
-
-# Change the default screenshot file name
-defaults write com.apple.screencapture "name" -string "screenshot"
-
-success "Screenshot settings configured"
 
 ###############################################################################
 # Dock                                                                         #
@@ -195,30 +126,6 @@ defaults write com.apple.dock showhidden -bool true
 
 success "Dock configured"
 
-# Prevent Time Machine from prompting to use new hard drives as backup volume
-defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
-
-###############################################################################
-# Activity Monitor                                                            #
-###############################################################################
-
-step "Configuring Activity Monitor"
-
-# Show the main window when launching Activity Monitor
-defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
-
-# Visualize CPU usage in the Activity Monitor Dock icon
-defaults write com.apple.ActivityMonitor IconType -int 5
-
-# Show all processes in Activity Monitor
-defaults write com.apple.ActivityMonitor ShowCategory -int 0
-
-# Sort Activity Monitor results by CPU usage
-defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"
-defaults write com.apple.ActivityMonitor SortDirection -int 0
-
-success "Activity Monitor configured"
-
 ###############################################################################
 # TextEdit                                                                     #
 ###############################################################################
@@ -237,18 +144,6 @@ success "TextEdit configured"
 ###############################################################################
 # Apply changes                                                               #
 ###############################################################################
-
-step "Restarting affected applications"
-
-for app in "Activity Monitor" "Calendar" "Contacts" "cfprefsd" \
-	"Dock" "Finder" "Mail"; do
-	killall "${app}" &> /dev/null || true
-done
-
-# Restart SystemUIServer and Spotlight together to prevent Spotlight breakage
-killall SystemUIServer &> /dev/null || true
-sleep 1
-killall Spotlight &> /dev/null || true
 
 echo ""
 success "macOS defaults configured!"
