@@ -88,20 +88,6 @@ defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 success "General settings configured"
 
 ###############################################################################
-# SSD-specific tweaks                                                         #
-###############################################################################
-
-step "Configuring SSD optimizations"
-
-# Disable hibernation (speeds up entering sleep mode)
-sudo pmset -a hibernatemode 0
-
-# Disable the sudden motion sensor as it's not useful for SSDs
-sudo pmset -a sms 0
-
-success "SSD settings configured"
-
-###############################################################################
 # Keyboard and input                                                          #
 ###############################################################################
 
