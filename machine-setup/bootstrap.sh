@@ -417,7 +417,6 @@ fi
 setup_gitconfig
 setup_dotfiles_symlink
 install_dotfiles
-setup_claude_code
 setup_ghostty
 
 # Run installation script with shell choice
@@ -477,6 +476,9 @@ if [ "$(uname -s)" == "Darwin" ]; then
     fi
   fi
 fi
+
+# Run AI setup last (requires all dependencies to be installed first)
+setup_claude_code
 
 echo ''
 if [ "$DRY_RUN" == "true" ]; then

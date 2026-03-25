@@ -170,17 +170,17 @@ This will:
 2. Configure git with your name and email
 3. Create symlinks for dotfiles (`.gitconfig`, `.zshrc` or `.config/fish/config.fish`, etc.)
 4. Create `~/.dotfiles` symlink pointing to your dotfiles directory
-5. Install AI coding assistant configuration (Claude Code + ECC plugin)
-6. Symlink Ghostty configuration to `~/.config/ghostty/`
-7. Install Homebrew (on macOS or Linux)
-8. Install packages from Brewfile
-9. Setup chosen shell (Fish with Fisher and Bass, or ZSH)
-10. Set Ghostty as default terminal (macOS only, if Fish was chosen)
-11. Run platform-specific installers
-12. Optionally apply macOS defaults (with `-d` or `--set-defaults` flag)
-13. Optionally set macOS hostname (with `-n` or `--set-hostname` flag)
+5. Symlink Ghostty configuration to `~/.config/ghostty/`
+6. Install Homebrew (on macOS or Linux)
+7. Install packages from Brewfile
+8. Setup chosen shell (Fish with Fisher and Bass, or ZSH)
+9. Set Ghostty as default terminal (macOS only, if Fish was chosen)
+10. Run platform-specific installers
+11. Optionally apply macOS defaults (with `-d` or `--set-defaults` flag)
+12. Optionally set macOS hostname (with `-n` or `--set-hostname` flag)
+13. Install AI coding assistant configuration (Claude Code + ECC plugin)
 
-**Note:** If Claude Code CLI is not installed, AI setup will be skipped with a warning. Install Claude Code from https://code.claude.com and re-run bootstrap to complete AI setup.
+**Note:** AI setup runs last after all dependencies are installed. If the CLI is not installed, it will be skipped with a warning. Install from https://code.claude.com and re-run bootstrap to complete AI setup.
 
 ## Updating
 
