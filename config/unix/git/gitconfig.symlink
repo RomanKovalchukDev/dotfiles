@@ -40,3 +40,12 @@
 	defaultBranch = main
 [pull]
 	rebase = true
+[user]
+	email = romankovalchuk@nerdzlab.com
+	name = Roman Kovalchuk
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
