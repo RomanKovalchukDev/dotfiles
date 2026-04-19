@@ -23,12 +23,18 @@ Never use dashes (— or -) as punctuation in documentation or README files. Rep
 - Keep interfaces small and focused
 - Write table-driven tests
 
-### Swift Development
-- Follow Swift API design guidelines
-- Use value types (structs) when appropriate
-- Leverage protocol-oriented programming
-- Use guard for early returns
-- Write comprehensive tests with XCTest
+### Swift / iOS Development
+When working on Swift or iOS projects, use the nerd skills automatically:
+
+- **Creating or modifying SwiftUI views, ViewModels, Coordinators, or design system components**: Use `/nerd-swiftui-view`
+- **Creating new types, reviewing naming, formatting, or organizing files**: Use `/nerd-swift-codestyle`
+- **Writing or reviewing tests**: Use `/nerd-swift-testing`
+- **Writing async/await, Tasks, actors, Combine publishers, or fixing concurrency issues**: Use `/nerd-swift-concurrency`
+- **Scaffolding a new iOS project from template**: Use `/nerd-ios-setup`
+
+When multiple skills apply (e.g., creating a new ViewModel involves both view patterns and concurrency), invoke the most specific one first, then reference the other as needed.
+
+Do not write Swift code without consulting the relevant nerd skill. The skills contain team conventions that override generic Swift best practices.
 
 ### Flutter / Dart
 - Follow Flutter best practices

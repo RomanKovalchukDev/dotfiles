@@ -1,0 +1,15 @@
+[submodule "ai/.claude/skills/nerd-swiftui-view"]
+	path = ai/.claude/skills/nerd-swiftui-view
+	url = git@github.com:RomanKovalchukDev/nerd-swiftui-view.git
+[submodule "ai/.claude/skills/nerd-swift-codestyle"]
+	path = ai/.claude/skills/nerd-swift-codestyle
+	url = git@github.com:RomanKovalchukDev/nerd-swift-codestyle.git
+[submodule "ai/.claude/skills/nerd-swift-testing"]
+	path = ai/.claude/skills/nerd-swift-testing
+	url = git@github.com:RomanKovalchukDev/nerd-swift-testing.git
+[submodule "ai/.claude/skills/nerd-swift-concurrency"]
+	path = ai/.claude/skills/nerd-swift-concurrency
+	url = git@github.com:RomanKovalchukDev/nerd-swift-concurrency.git
+[submodule "ai/.claude/skills/nerd-ios-setup"]
+	path = ai/.claude/skills/nerd-ios-setup
+	url = git@github.com:RomanKovalchukDev/nerd-ios-setup.git
