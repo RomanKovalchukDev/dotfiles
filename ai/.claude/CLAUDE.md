@@ -9,60 +9,27 @@ Never use dashes (— or -) as punctuation in documentation or README files. Rep
 
 ## Coding Standards
 
-### C# / WPF Desktop Development
-- Follow MVVM pattern for WPF applications
-- Use async/await for all I/O operations
-- Implement INotifyPropertyChanged for data binding
-- Use dependency injection (Microsoft.Extensions.DependencyInjection)
-- Follow C# naming conventions (PascalCase for public members)
+Language-specific coding standards live in `~/.claude/rules/<language>/`. Do not duplicate them here.
 
-### Go Development
-- Follow effective Go guidelines
-- Use context for cancellation and timeouts
-- Handle all errors explicitly
-- Keep interfaces small and focused
-- Write table-driven tests
+### Swift / iOS Development (MANDATORY)
 
-### Swift / iOS Development
-When working on Swift or iOS projects, use the nerd skills automatically:
+Do not write Swift code without first invoking the relevant nerd skill via the Skill tool. The skills contain team conventions that override generic Swift best practices.
 
-- **Creating or modifying SwiftUI views, ViewModels, Coordinators, or design system components**: Use `/nerd-swiftui-view`
-- **Creating new types, reviewing naming, formatting, or organizing files**: Use `/nerd-swift-codestyle`
-- **Writing or reviewing tests**: Use `/nerd-swift-testing`
-- **Writing async/await, Tasks, actors, Combine publishers, or fixing concurrency issues**: Use `/nerd-swift-concurrency`
-- **Scaffolding a new iOS project from template**: Use `/nerd-ios-setup`
+- **Views, ViewModels, Coordinators, design system**: `/nerd-swiftui-view`
+- **Naming, formatting, file organization**: `/nerd-swift-codestyle`
+- **Tests**: `/nerd-swift-testing`
+- **async/await, Tasks, actors, Combine**: `/nerd-swift-concurrency`
+- **Networking, API clients, request/response**: `/nerd-swift-networking`
+- **Architecture, layer boundaries, repositories**: `/nerd-swift-architecture`
+- **Keychain, tokens, biometric auth, security**: `/nerd-swift-security`
+- **DocC documentation**: `/nerd-swift-docc`
+- **Code review**: `/nerd-swift-code-review`
+- **Generate networking from OpenAPI spec**: `/nerd-swift-gen-api`
+- **Generate feature screen from Figma**: `/nerd-swift-gen-screen`
+- **Generate UI component from Figma**: `/nerd-swift-gen-component`
+- **Scaffold new iOS project**: `/nerd-ios-setup`
 
-When multiple skills apply (e.g., creating a new ViewModel involves both view patterns and concurrency), invoke the most specific one first, then reference the other as needed.
-
-Do not write Swift code without consulting the relevant nerd skill. The skills contain team conventions that override generic Swift best practices.
-
-### Flutter / Dart
-- Follow Flutter best practices
-- Separate business logic from UI (BLoC, Provider, or Riverpod)
-- Use const constructors where possible
-- Implement proper state management
-- Write widget tests
-
-### Kotlin
-- Use data classes for DTOs
-- Leverage coroutines for async operations
-- Follow Kotlin idioms (scope functions, extension functions)
-- Use null safety features
-- Prefer immutability
-
-### C++
-- Follow Modern C++ practices (C++17/20)
-- Use RAII for resource management
-- Prefer smart pointers over raw pointers
-- Use const correctness
-- Follow Rule of Five/Zero
-
-### Python
-- Follow PEP 8 style guide
-- Use type hints for all function signatures
-- Prefer dataclasses for data containers
-- Use context managers for resource cleanup
-- Write doctests or pytest tests
+When multiple skills apply, invoke the most specific one first, then reference the other as needed.
 
 ## Using GitHub
 For questions about GitHub, use the gh tool
