@@ -13,6 +13,11 @@ TARGET="${1:-$HOME/Documents/PersonalProjects/nerd-skills}"
 GITHUB="git@github.com:RomanKovalchukDev"
 
 SKILLS=(
+    nerd-dev-pipeline
+    nerd-ios-claude-guardrails
+    nerd-ios-fastlane
+    nerd-ios-precommit
+    nerd-ios-quality-gate
     nerd-ios-setup
     nerd-swift-architecture
     nerd-swift-code-review
