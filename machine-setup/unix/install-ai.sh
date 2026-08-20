@@ -47,20 +47,19 @@ echo -e "${BLUE}Layer 2: Everything Claude Code Plugin${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-echo -e "${GREEN}📦 Installing ECC plugin...${NC}"
+echo -e "${GREEN}📦 Installing plugin marketplaces + plugins from manifest...${NC}"
 echo ""
 
-# Install ECC plugin (provides commands, agents, skills, hooks)
-cat <<'EOF' | claude
-/plugin marketplace add affaan-m/everything-claude-code
-/plugin install everything-claude-code@everything-claude-code
-EOF
-
-echo ""
-echo -e "${GREEN}✓ ECC plugin installed${NC}"
-echo "  - 60+ commands available"
-echo "  - 28 agents available"
-echo "  - 119 skills available"
+# Manifest-driven install: ECC, official swift/clangd LSPs, superpowers,
+# wshobson (SQL database-design + deployment), VGV flutter.
+# Edit ai/.claude/plugins/plugins.manifest to change what gets installed.
+if [ -f "$DOTFILES/ai/.claude/plugins/install-plugins.sh" ]; then
+  bash "$DOTFILES/ai/.claude/plugins/install-plugins.sh" || \
+    echo -e "${YELLOW}⚠️  Some plugins failed to install (continuing...)${NC}"
+  echo -e "${GREEN}✓ Plugins installed from manifest${NC}"
+else
+  echo -e "${YELLOW}⚠️  plugins/install-plugins.sh not found, skipping${NC}"
+fi
 echo ""
 
 # Install ECC rules manually (plugin limitation - rules can't be distributed via plugins)
@@ -102,6 +101,25 @@ else
   echo "Skipping ECC rules installation. Clone the repo manually if needed."
 fi
 
+echo ""
+
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${BLUE}MCP Servers${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+
+echo -e "${GREEN}🔌 Registering MCP servers from manifest...${NC}"
+# stdio servers (context7, firebase, xcode, plantuml, frame0, roadmapsh,
+# office-word) register immediately. HTTP servers (notion, nerdz) still need a
+# one-time interactive login afterwards. See ai/.claude/mcp-configs/.
+if [ -f "$DOTFILES/ai/.claude/mcp-configs/install-mcp.sh" ]; then
+  bash "$DOTFILES/ai/.claude/mcp-configs/install-mcp.sh" || \
+    echo -e "${YELLOW}⚠️  Some MCP servers failed to register (continuing...)${NC}"
+  echo -e "${GREEN}✓ MCP servers registered${NC}"
+  echo "  HTTP servers need a one-time login: claude mcp login notion && claude mcp login nerdz"
+else
+  echo -e "${YELLOW}⚠️  mcp-configs/install-mcp.sh not found, skipping${NC}"
+fi
 echo ""
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -160,10 +178,14 @@ echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━�
 echo -e "${GREEN}✅ AI Configuration Complete!${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo "Layered architecture:"
+echo "Setup summary:"
 echo "  Layer 1: Claude Code Core ✓"
-echo "  Layer 2: ECC Plugin (60+ commands, 28 agents, 119 skills) ✓"
+echo "  Layer 2: Plugins from manifest (ECC, LSPs, superpowers, wshobson, VGV) ✓"
+echo "  MCP:     Global servers registered from manifest ✓"
 echo "  Layer 3: Personal configs (CLAUDE.md, agents, skills, statusline) ✓"
+echo ""
+echo "Next: restart Claude Code to load plugins/skills, then for HTTP MCPs run:"
+echo "     claude mcp login notion && claude mcp login nerdz"
 echo ""
 echo "Try: claude"
 echo "     /everything-claude-code:plan \"Add user authentication\""
