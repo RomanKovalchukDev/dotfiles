@@ -62,43 +62,26 @@ else
 fi
 echo ""
 
-# Install ECC rules manually (plugin limitation - rules can't be distributed via plugins)
+# Install ECC rules manually (plugin limitation - rules can't be distributed
+# via plugins). Source them from the ECC marketplace clone that Layer 2 just
+# checked out. Copy each directory whole (common + per-language) preserving
+# structure — ECC's rules/README warns NOT to flatten into one dir, because
+# common and language files share names (flattening overwrites them and breaks
+# the ../common/ references). CLAUDE.md expects ~/.claude/rules/<language>/.
 echo -e "${GREEN}📝 Installing ECC rules...${NC}"
-ECC_REPO="$HOME/Documents/PersonalProjects/setup/everything-claude-code"
+ECC_RULES="$HOME/.claude/plugins/marketplaces/everything-claude-code/rules"
 
-if [ -d "$ECC_REPO" ]; then
+if [ -d "$ECC_RULES" ]; then
   mkdir -p ~/.claude/rules
-
-  # Install common rules (always needed)
-  cp -r "$ECC_REPO/rules/common/"* ~/.claude/rules/ 2>/dev/null || true
-  echo "  ✓ Common rules"
-
-  # Install language-specific rules
-  cp -r "$ECC_REPO/rules/typescript/"* ~/.claude/rules/ 2>/dev/null || true
-  echo "  ✓ TypeScript/JavaScript rules"
-
-  cp -r "$ECC_REPO/rules/python/"* ~/.claude/rules/ 2>/dev/null || true
-  echo "  ✓ Python rules"
-
-  cp -r "$ECC_REPO/rules/golang/"* ~/.claude/rules/ 2>/dev/null || true
-  echo "  ✓ Go rules"
-
-  cp -r "$ECC_REPO/rules/swift/"* ~/.claude/rules/ 2>/dev/null || true
-  echo "  ✓ Swift rules"
-
-  cp -r "$ECC_REPO/rules/csharp/"* ~/.claude/rules/ 2>/dev/null || true
-  echo "  ✓ C# rules"
-
-  cp -r "$ECC_REPO/rules/kotlin/"* ~/.claude/rules/ 2>/dev/null || true
-  echo "  ✓ Kotlin rules"
-
-  cp -r "$ECC_REPO/rules/rust/"* ~/.claude/rules/ 2>/dev/null || true
-  echo "  ✓ Rust/C++ rules"
-
-  echo -e "${GREEN}✓ ECC rules installed${NC}"
+  for dir in "$ECC_RULES"/*/; do
+    name=$(basename "$dir")
+    cp -r "$dir" ~/.claude/rules/"$name"
+    echo "  ✓ $name rules"
+  done
+  echo -e "${GREEN}✓ ECC rules installed (structure preserved)${NC}"
 else
-  echo -e "${YELLOW}⚠️  ECC repo not found at $ECC_REPO${NC}"
-  echo "Skipping ECC rules installation. Clone the repo manually if needed."
+  echo -e "${YELLOW}⚠️  ECC rules not found at $ECC_RULES${NC}"
+  echo "  Ensure the ECC plugin marketplace was added (Layer 2), then re-run."
 fi
 
 echo ""
