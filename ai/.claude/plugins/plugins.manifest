@@ -1,0 +1,57 @@
+# Claude Code plugin marketplaces and plugins to install on a new machine.
+#
+# Plugins stay owned/updated by their authors (installed via marketplace),
+# NOT vendored into this repo. This manifest just records WHAT to install so a
+# fresh machine can be reproduced with install-plugins.sh.
+#
+# Format (one directive per line, '#' starts a comment):
+#   marketplace <github-owner/repo>        # register a plugin marketplace
+#   plugin      <plugin-name>@<market>     # install a plugin from a marketplace
+#
+# Keep in sync with:  claude plugin marketplace list  &&  claude plugin list
+
+# ---------------------------------------------------------------------------
+# marketplaces
+# ---------------------------------------------------------------------------
+marketplace anthropics/claude-plugins-official
+marketplace affaan-m/everything-claude-code
+
+# ---------------------------------------------------------------------------
+# plugins (currently installed, confirmed good)
+# ---------------------------------------------------------------------------
+plugin everything-claude-code@everything-claude-code
+plugin swift-lsp@claude-plugins-official
+plugin clangd-lsp@claude-plugins-official
+
+# ---------------------------------------------------------------------------
+# community additions
+# Installing third-party plugins runs their code — vet before adding.
+# ---------------------------------------------------------------------------
+
+# superpowers: TDD/brainstorming/workflow skills by obra (Jesse Vincent).
+# Other plugins in this marketplace: superpowers-chrome, episodic-memory,
+# claude-session-driver, elements-of-style, etc. (add lines if wanted).
+marketplace obra/superpowers-marketplace
+plugin superpowers@superpowers-marketplace
+
+# wshobson/agents (marketplace id: claude-code-workflows) — SQL gap.
+# database-design ships a Postgres SKILL + sql-pro / database-architect agents.
+# Deployment plugins also live here (deployment-strategies, cicd-automation,
+# kubernetes-operations, cloud-infrastructure) — add lines if wanted.
+marketplace wshobson/agents
+plugin database-design@claude-code-workflows
+
+# design: intentionally not filled via anthropics/skills — its only design
+# bundle (example-skills) also ships pdf/docx/pptx/xlsx, duplicating the
+# office-skills already installed. For real design coverage consider
+# superdesigndev/superdesign-skill instead. Built-in artifact-design + dataviz
+# cover the basics.
+
+# deployment: wshobson infra plugins (marketplace claude-code-workflows added above).
+plugin deployment-strategies@claude-code-workflows
+plugin cicd-automation@claude-code-workflows
+
+# flutter: Very Good Ventures (org-backed, Bloc-opinionated). For a
+# state-management-agnostic alternative swap to cleydson/flutter-claude-code.
+marketplace VeryGoodOpenSource/very-good-claude-code-marketplace
+plugin vgv-ai-flutter-plugin@very-good-claude-code-marketplace

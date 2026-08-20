@@ -55,6 +55,7 @@
     ],
     "defaultMode": "acceptEdits"
   },
+  "model": "opus[1m]",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
@@ -63,9 +64,36 @@
     "laravel-simplifier@laravel": true,
     "agent-browser@agent-browser": true,
     "everything-claude-code@everything-claude-code": true,
-    "swift-lsp@claude-plugins-official": true
+    "swift-lsp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "superpowers@superpowers-marketplace": true,
+    "database-design@claude-code-workflows": true,
+    "deployment-strategies@claude-code-workflows": true,
+    "cicd-automation@claude-code-workflows": true,
+    "vgv-ai-flutter-plugin@very-good-claude-code-marketplace": true
+  },
+  "extraKnownMarketplaces": {
+    "superpowers-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers-marketplace"
+      }
+    },
+    "claude-code-workflows": {
+      "source": {
+        "source": "github",
+        "repo": "wshobson/agents"
+      }
+    },
+    "very-good-claude-code-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "VeryGoodOpenSource/very-good-claude-code-marketplace"
+      }
+    }
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true
 }
