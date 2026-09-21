@@ -301,9 +301,7 @@ setup_claude_code () {
   if [ "$DRY_RUN" == "true" ]; then
     success "run machine-setup/unix/install-ai.sh"
     echo "  Would install:"
-    echo "    - ECC plugin (60+ commands, 28 agents, 119 skills)"
-    echo "    - Language-specific rules (C#, Go, Swift, Flutter, Kotlin, C++, Python)"
-    echo "    - Personal configs (CLAUDE.md, settings.json, statusline)"
+    echo "    - dotclaude (private): CLAUDE.md, rules, skills, hooks, plugins"
     return
   fi
 
@@ -331,9 +329,7 @@ setup_claude_code () {
     # Normal mode: show progress
     if sh machine-setup/unix/install-ai.sh 2>&1 | while read -r data; do debug "$data"; done; then
       success "AI configuration installed"
-      echo "    - ECC plugin (60+ commands, 28 agents, 119 skills)"
-      echo "    - Language-specific rules (C#, Go, Swift, Flutter, Kotlin, C++, Python)"
-      echo "    - Personal configs (CLAUDE.md, settings.json, statusline)"
+      echo "    - dotclaude (private): CLAUDE.md, rules, skills, hooks, plugins"
     else
       warning "AI configuration setup encountered errors (continuing...)"
     fi

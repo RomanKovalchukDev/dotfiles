@@ -37,3 +37,6 @@ cask 'slack'
 cask 'figma'
 cask 'firefox'
 cask 'sourcetree'
+
+brew "jq"
+brew "shellcheck"

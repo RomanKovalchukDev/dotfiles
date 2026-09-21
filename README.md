@@ -42,43 +42,9 @@ Application configuration files organized by platform.
   - `homebrew/` - Homebrew-specific settings
   - `xcode/` - Xcode configuration
 
-### ai/
+### AI configuration
 
-AI coding assistant configuration using layered architecture.
-
-**Layered Architecture:**
-- **Layer 1**: Claude Code Core (base system)
-- **Layer 2**: Everything Claude Code Plugin (60 commands, 28 agents, 119 skills)
-- **Layer 3**: Personal configs (CLAUDE.md, agents, skills, statusline)
-
-**Structure:**
-- `.claude/CLAUDE.md` - Personal preferences and coding standards
-  - C# / WPF Desktop Development
-  - Go Development
-  - Swift Development
-  - Flutter / Dart
-  - Kotlin
-  - C++
-  - Python
-- `.claude/settings.json` - Security deny list, statusline, permissions
-- `.claude/agents/` - Your custom agents (empty by default)
-- `.claude/skills/` - Your custom skills (empty by default)
-  - `SKILL_TEMPLATE.md` - Template for creating skills
-- `.claude/rules/` - Your custom rules (empty by default)
-- `scripts/statusline.sh` - Custom statusline (repo + context %)
-- `README.md` - Full AI setup documentation
-- `USAGE_GUIDE.md` - How to use ECC with your development stack
-
-**Installation:**
-
-AI setup is automatically included in `bootstrap.sh`. To install manually:
-```bash
-machine-setup/unix/install-ai.sh
-```
-
-This installs ECC plugin (community toolkit) + language-specific rules + symlinks personal configs from `ai/.claude/`
-
-See `ai/README.md` for detailed documentation and `ai/USAGE_GUIDE.md` for language-specific usage examples.
+Claude Code configuration is not part of this repository. It lives in the private `dotclaude` repository, which `machine-setup/unix/install-ai.sh` clones and installs during bootstrap. Everything under `~/.claude` except `settings.local.json` is a symlink into that repository.
 
 ## Components
 
