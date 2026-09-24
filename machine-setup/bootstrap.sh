@@ -94,16 +94,6 @@ if [ "$DRY_RUN" == "true" ]; then
   echo ''
 fi
 
-# Initialize git submodules
-if [ -f .gitmodules ]; then
-  if [ "$DRY_RUN" == "true" ]; then
-    info "Would initialize git submodules"
-  else
-    echo "Initializing git submodules..."
-    git submodule update --init --recursive
-  fi
-fi
-
 echo ''
 
 info () {
@@ -336,6 +326,33 @@ setup_claude_code () {
   fi
 }
 
+setup_plannotator () {
+  info 'setting up plannotator'
+
+  if [ "$DRY_RUN" == "true" ]; then
+    success "run machine-setup/unix/install-plannotator.sh"
+    echo "  Would install:"
+    echo "    - plannotator binary into ~/.local/bin (skills come from dotclaude)"
+    return
+  fi
+
+  debug "Running machine-setup/unix/install-plannotator.sh"
+
+  if [ "$VERBOSE" == "true" ]; then
+    if sh machine-setup/unix/install-plannotator.sh; then
+      success "plannotator installed"
+    else
+      warning "plannotator setup encountered errors (continuing...)"
+    fi
+  else
+    if sh machine-setup/unix/install-plannotator.sh 2>&1 | while read -r data; do debug "$data"; done; then
+      success "plannotator installed"
+    else
+      warning "plannotator setup encountered errors (continuing...)"
+    fi
+  fi
+}
+
 setup_ghostty () {
   info 'setting up Ghostty configuration'
 
@@ -410,6 +427,16 @@ if [ -z "$SHELL_CHOICE" ] && [ "$DRY_RUN" != "true" ]; then
   echo ""
 fi
 
+# Initialize git submodules
+if [ -f .gitmodules ]; then
+  if [ "$DRY_RUN" == "true" ]; then
+    info "Would initialize git submodules"
+  else
+    echo "Initializing git submodules..."
+    git submodule update --init --recursive
+  fi
+fi
+
 setup_gitconfig
 setup_dotfiles_symlink
 install_dotfiles
@@ -472,6 +499,8 @@ if [ "$(uname -s)" == "Darwin" ]; then
     fi
   fi
 fi
+
+setup_plannotator
 
 # Run AI setup last (requires all dependencies to be installed first)
 setup_claude_code

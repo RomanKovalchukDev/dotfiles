@@ -46,6 +46,8 @@ Application configuration files organized by platform.
 
 Claude Code configuration is not part of this repository. It lives in the private `dotclaude` repository, which `machine-setup/unix/install-ai.sh` clones and installs during bootstrap. Everything under `~/.claude` except `settings.local.json` is a symlink into that repository.
 
+`machine-setup/unix/install-plannotator.sh` installs the `plannotator` binary into `~/.local/bin`, pinned by `PLANNOTATOR_VERSION`. It runs the upstream installer with `--minimal`, so no skills, hooks or slash commands are written. Those would land in `~/.claude`, which is a symlink into `dotclaude`, and `dotclaude/config/skills.manifest` owns the plannotator skills instead.
+
 ## Components
 
 Special files in the hierarchy:
