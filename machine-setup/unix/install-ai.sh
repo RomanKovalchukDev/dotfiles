@@ -2,7 +2,11 @@
 # AI configuration lives in the private dotclaude repository. This script only fetches and runs it.
 set -e
 
-DOTCLAUDE_DIR="${DOTCLAUDE_DIR:-$HOME/Documents/PersonalProjects/dotclaude}"
+# dotclaude is cloned beside this repository, wherever this repository happens to
+# be. Deriving it from this script's own location keeps the pair portable; set
+# DOTCLAUDE_DIR to override.
+DOTFILES_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+DOTCLAUDE_DIR="${DOTCLAUDE_DIR:-$(dirname "$DOTFILES_ROOT")/dotclaude}"
 DOTCLAUDE_REPO="git@github.com:RomanKovalchukDev/dotclaude.git"
 
 # The claude-code cask can have been installed moments ago by a sibling script

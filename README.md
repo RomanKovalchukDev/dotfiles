@@ -115,7 +115,19 @@ cd ~/Documents/PersonalProjects/dotfiles
 sh machine-setup/bootstrap.sh
 ```
 
-The clone path matters. `machine-setup/unix/install-ai.sh` and `dotclaude/scripts/link-nerd-skills.sh` both default to paths under `~/Documents/PersonalProjects/`, and bootstrap creates `~/.dotfiles` as a symlink to wherever the repository actually lives, which is what puts `config/unix/bin` on `$PATH`. Cloning somewhere else means passing those paths by hand.
+Clone it wherever you like. Nothing hardcodes this path: `install-ai.sh` derives the repository root from its own location and looks for `dotclaude` beside it, `dotclaude/scripts/link-nerd-skills.sh` looks for the team repositories under `<parent>/ai/mobile/`, and bootstrap creates `~/.dotfiles` as a symlink to wherever the repository actually lives, which is what puts `config/unix/bin` on `$PATH`.
+
+What does matter is the sibling layout. These four are expected to share one parent directory:
+
+```
+<parent>/
+  dotfiles/
+  dotclaude/
+  ai/ai-testing/
+  ai/mobile/nerd-ios-skills, nerd-android-skills
+```
+
+Override any of it with `DOTCLAUDE_DIR`, `DOTCLAUDE_SRC`, or the two positional arguments to `link-nerd-skills.sh`.
 
 The bootstrap will:
 - Prompt you to choose a shell (Fish, ZSH, or skip)
