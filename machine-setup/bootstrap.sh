@@ -343,6 +343,19 @@ ensure_brew_on_path () {
   return 1
 }
 
+setup_raycast () {
+  [ "$(uname -s)" == "Darwin" ] || return 0
+  info 'importing Raycast settings'
+
+  if [ "$DRY_RUN" == "true" ]; then
+    success "run machine-setup/mac/import-raycast-config.sh"
+    echo "  Would import a .rayconfig export if one is present"
+    return
+  fi
+
+  sh machine-setup/mac/import-raycast-config.sh 2>&1 | while read -r data; do info "$data"; done
+}
+
 setup_plannotator () {
   info 'setting up plannotator'
 
@@ -519,6 +532,7 @@ if [ "$(uname -s)" == "Darwin" ]; then
 fi
 
 setup_plannotator
+setup_raycast
 
 # Run AI setup last (requires all dependencies to be installed first)
 setup_claude_code

@@ -2,3 +2,6 @@ git/gitconfig.local.symlink
 Brewfile.lock.json
 .claude.local.json
 .superpowers/
+
+# Raycast exports can carry extension credentials
+*.rayconfig

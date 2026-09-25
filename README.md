@@ -42,6 +42,14 @@ Application configuration files organized by platform.
   - `homebrew/` - Homebrew-specific settings
   - `xcode/` - Xcode configuration
 
+### Raycast
+
+Raycast is installed from the Brewfile, but its hotkey (Option+Space here), aliases, quicklinks and extension settings live in an encrypted database rather than in defaults, so no script can write them.
+
+Move them with an export. On the old machine, Raycast > Settings > Advanced > Export Preferences. Put the resulting `.rayconfig` somewhere outside this repository, since it can carry extension credentials, and `*.rayconfig` is gitignored so it cannot be committed by accident. Bootstrap looks for one in `<parent-of-dotfiles>/private/`, or wherever `RAYCAST_CONFIG` points, and opens it in Raycast. When there is no export it says so and moves on.
+
+Option+Space does not collide with Spotlight, so no system shortcut needs changing.
+
 ### AI configuration
 
 Claude Code configuration is not part of this repository. It lives in the private `dotclaude` repository, which `machine-setup/unix/install-ai.sh` clones and installs during bootstrap. Everything under `~/.claude` except `settings.local.json` is a symlink into that repository.
