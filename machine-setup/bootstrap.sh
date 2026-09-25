@@ -295,10 +295,15 @@ setup_claude_code () {
     return
   fi
 
-  # Check if Claude Code CLI is installed
+  # machine-setup/unix/install.sh installs the claude-code cask, but it runs as a
+  # child process and its brew shellenv never reaches this one. Pick Homebrew up
+  # here before deciding the CLI is missing.
+  ensure_brew_on_path || true
+
   if ! command -v claude &> /dev/null; then
     warning "Claude Code CLI not found, skipping AI setup"
-    warning "Install Claude Code from https://code.claude.com and re-run bootstrap"
+    warning "Expected it from the claude-code cask in machine-setup/unix/Brewfile"
+    warning "Check that brew bundle succeeded, then re-run: machine-setup/unix/install-ai.sh"
     return
   fi
 
@@ -324,6 +329,18 @@ setup_claude_code () {
       warning "AI configuration setup encountered errors (continuing...)"
     fi
   fi
+}
+
+ensure_brew_on_path () {
+  command -v brew > /dev/null 2>&1 && return 0
+  local candidate
+  for candidate in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+    if [ -x "$candidate" ]; then
+      eval "$("$candidate" shellenv)"
+      return 0
+    fi
+  done
+  return 1
 }
 
 setup_plannotator () {
