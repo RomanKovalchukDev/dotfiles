@@ -16,6 +16,27 @@ echo "  Setting up Fish shell..."
 # Get absolute path to dotfiles
 DOTFILES_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
+# Bootstrap runs this with stdout and stderr piped, so an interactive prompt here
+# is invisible and looks like a hang. Follow bootstrap's documented policy instead:
+# never overwrite, always back up with a timestamp.
+link_with_backup() {
+  src="$1"
+  dst="$2"
+  if [ -L "$dst" ]; then
+    if [ "$(readlink "$dst")" = "$src" ]; then
+      echo "  already linked: $dst"
+      return 0
+    fi
+    rm -f "$dst"
+  elif [ -e "$dst" ]; then
+    backup="$dst.backup.$(date +%Y%m%d_%H%M%S)"
+    mv "$dst" "$backup"
+    echo "  backed up $dst to $backup"
+  fi
+  ln -s "$src" "$dst"
+  echo "  linked $dst"
+}
+
 # Create Fish config directory
 if [ ! -d "$HOME/.config/fish" ]; then
   mkdir -p "$HOME/.config/fish"
@@ -23,39 +44,11 @@ fi
 
 # Symlink Fish config
 echo "  Symlinking Fish configuration..."
-if [ -L "$HOME/.config/fish/config.fish" ] || [ -f "$HOME/.config/fish/config.fish" ]; then
-  echo "  Fish config already exists at ~/.config/fish/config.fish"
-  read -p "  Overwrite? [y/N] " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    rm -f "$HOME/.config/fish/config.fish"
-    ln -s "$DOTFILES_ROOT/config/unix/fish/config.fish" "$HOME/.config/fish/config.fish"
-    echo "  Fish config symlinked"
-  else
-    echo "  Skipping Fish config symlink"
-  fi
-else
-  ln -s "$DOTFILES_ROOT/config/unix/fish/config.fish" "$HOME/.config/fish/config.fish"
-  echo "  Fish config symlinked"
-fi
+link_with_backup "$DOTFILES_ROOT/config/unix/fish/config.fish" "$HOME/.config/fish/config.fish"
 
 # Symlink fish_plugins (Fisher plugin list)
 echo "  Symlinking Fish plugins list..."
-if [ -L "$HOME/.config/fish/fish_plugins" ] || [ -f "$HOME/.config/fish/fish_plugins" ]; then
-  echo "  fish_plugins already exists at ~/.config/fish/fish_plugins"
-  read -p "  Overwrite? [y/N] " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    rm -f "$HOME/.config/fish/fish_plugins"
-    ln -s "$DOTFILES_ROOT/config/unix/fish/fish_plugins.symlink" "$HOME/.config/fish/fish_plugins"
-    echo "  fish_plugins symlinked"
-  else
-    echo "  Skipping fish_plugins symlink"
-  fi
-else
-  ln -s "$DOTFILES_ROOT/config/unix/fish/fish_plugins.symlink" "$HOME/.config/fish/fish_plugins"
-  echo "  fish_plugins symlinked"
-fi
+link_with_backup "$DOTFILES_ROOT/config/unix/fish/fish_plugins.symlink" "$HOME/.config/fish/fish_plugins"
 
 # Install Fisher (Fish plugin manager)
 echo "  Installing Fisher..."

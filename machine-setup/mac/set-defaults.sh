@@ -18,11 +18,15 @@ echo ""
 warn "This will change macOS system settings."
 echo "Close System Settings before continuing."
 echo ""
-read -p "Continue? (y/n) " -n 1 -r
-echo ""
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "Cancelled."
-    exit 0
+# SET_DEFAULTS_ASSUME_YES=1 skips the prompt, for an unattended bootstrap.
+if [ "${SET_DEFAULTS_ASSUME_YES:-}" != "1" ]; then
+    read -p "Continue? (y/n) " -n 1 -r
+    echo ""
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        # Exit non zero so the caller reports "not applied" instead of success.
+        echo "Cancelled, no system settings changed."
+        exit 1
+    fi
 fi
 
 # Ask for administrator password upfront

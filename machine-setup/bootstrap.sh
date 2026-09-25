@@ -497,7 +497,8 @@ if [ "$(uname -s)" == "Darwin" ]; then
       then
         success "macOS defaults applied"
       else
-        fail "error applying macOS defaults"
+        warning "macOS defaults were not applied (cancelled or failed)"
+        warning "re-run with: SET_DEFAULTS_ASSUME_YES=1 sh machine-setup/mac/set-defaults.sh"
       fi
     fi
   fi
