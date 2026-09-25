@@ -87,14 +87,14 @@ On a brand new machine, you need to set up SSH keys first:
 
 ```sh
 # Download and run pre-bootstrap to setup SSH
-curl -fsSL https://raw.githubusercontent.com/yourusername/dotfiles/main/machine-setup/unix/pre-bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/RomanKovalchukDev/dotfiles/master/machine-setup/unix/pre-bootstrap.sh | bash
 ```
 
 Or if you prefer to clone with HTTPS first:
 
 ```sh
-git clone https://github.com/yourusername/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
+git clone https://github.com/RomanKovalchukDev/dotfiles.git ~/Documents/PersonalProjects/dotfiles
+cd ~/Documents/PersonalProjects/dotfiles
 machine-setup/unix/pre-bootstrap.sh
 ```
 
@@ -110,10 +110,12 @@ The pre-bootstrap script will:
 After SSH is set up and Time Machine backup is complete:
 
 ```sh
-git clone git@github.com:yourusername/dotfiles.git ~/Documents/dotfiles
-cd ~/Documents/dotfiles
+git clone git@github.com:RomanKovalchukDev/dotfiles.git ~/Documents/PersonalProjects/dotfiles
+cd ~/Documents/PersonalProjects/dotfiles
 sh machine-setup/bootstrap.sh
 ```
+
+The clone path matters. `machine-setup/unix/install-ai.sh` and `dotclaude/scripts/link-nerd-skills.sh` both default to paths under `~/Documents/PersonalProjects/`, and bootstrap creates `~/.dotfiles` as a symlink to wherever the repository actually lives, which is what puts `config/unix/bin` on `$PATH`. Cloning somewhere else means passing those paths by hand.
 
 The bootstrap will:
 - Prompt you to choose a shell (Fish, ZSH, or skip)
@@ -155,14 +157,14 @@ This will:
 To update dependencies and packages:
 
 ```sh
-cd ~/.dotfiles
+cd ~/Documents/PersonalProjects/dotfiles
 machine-setup/unix/install.sh
 ```
 
 To update dotfiles repository:
 
 ```sh
-cd ~/.dotfiles
+cd ~/Documents/PersonalProjects/dotfiles
 git pull
 ```
 
